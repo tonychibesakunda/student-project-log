@@ -16,7 +16,7 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('coordinator.view_supervisor.post') }}" method="POST" autocomplete="off">
+            
             
                 <fieldset>
 
@@ -29,24 +29,37 @@
                                     <th>Name</th>
                                     <th>Username</th>
                                     <th>Email</th>
+                                    <th>Account Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Tony Mulenga Chibesakunda</td>
-                                    <th>13031104</th>
-                                    <td>tonymchibesakunda@gmail.com</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('coordinator.edit_supervisor') }}">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete'>Delete</button></td>
-                                </tr>
+                                {% if supervisors is empty %}
+                                    <tr> 
+                                        
+                                        <td colspan="5"><h4 style="text-align: center; color: gray;">no records have been added to the system!</h4></td>
+                                    </tr>
+                                {% else %}
+                                    {% for supervisor in supervisors %}
+                                        <tr>
+                                            <td>{{ supervisor.first_name }} {{ supervisor.other_names }} {{ supervisor.last_name }}</td>
+                                            <td>{{ supervisor.username }}</td>
+                                            <td>{{ supervisor.email }}</td>
+                                            <th>
+                                                {% if supervisor.active == true %}<p style="color: green;">Active</p>{% else %}<p style="color: red;">Inactive</p>{% endif %}
+                                            </th>
+                                            <td><button type='button' class='btn btn-link'><a href="{{ urlFor('coordinator.edit_supervisor', {id: supervisor.id}) }}">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ supervisor.id }}'>Delete</button></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
                             
-                    <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
+                       
                             
                 </fieldset>
-            </form>
+            
             
         </div>
 
@@ -56,8 +69,8 @@
                 <p>This section is used for viewing supervisors added to the system</p>
             </div>
         </div>
-
-        <div class="modal fade" id="verifyDelete" role="dialog">
+{% for supervisor in supervisors %}
+        <div class="modal fade" id="verifyDelete{{ supervisor.id }}" role="dialog">
             <div class="modal-dialog">
                 <!-- Modal Content -->
                 <div class="modal-content">
@@ -69,13 +82,16 @@
                         <p>This record will permanently be deleted / removed from the system. Do you wish to continue?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>&nbsp;
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <form action="{{ urlFor('coordinator.view_supervisor.post', {id: supervisor.id}) }}" method="POST" autocomplete="off">
+                            <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
+                            <button type="submit" class="btn btn-primary" name="delete" value="{{ supervisor.id }}">Yes</button>&nbsp;
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-
+{% endfor %}
     </div>
 </div>
 {% endblock %}

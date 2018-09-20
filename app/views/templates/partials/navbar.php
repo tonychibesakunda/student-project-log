@@ -28,7 +28,7 @@
                         <li><a href="{{ urlFor('coordinator.dashboard') }}">Dashboard</a></li>
                         <li><a href="{{ urlFor('coordinator.view_student') }}">Students</a></li>
                         <li><a href="{{ urlFor('coordinator.view_projects') }}">Projects</a></li>
-                        <li><a href="{{ urlFor('coordinator.add_supervisor') }}">Supervisors</a></li>
+                        <li><a href="{{ urlFor('coordinator.view_supervisor') }}">Supervisors</a></li>
                         <!--<li><a href="#">Schedules</a></li>-->
                     {% endif %}
                     <!-- PROJECT COORDINATOR NAVBAR LINKS -->
@@ -49,9 +49,11 @@
                         <li><a href="{{ urlFor('student.dashboard') }}">Dashboard</a></li>
                         <li><a href="{{ urlFor('student.view_projects') }}">Projects</a></li>
                         <li><a href="{{ urlFor('student.view_supervisors') }}">Supervisors</a></li>
-                        <li><a href="{{ urlFor('student.add_project') }}">My Project</a></li>
-                        <li><a href="{{ urlFor('student.add_scheduled_meeting') }}">Schedules</a></li>
-                        <li><a href="{{ urlFor('student.add_task') }}">Tasks</a></li>
+                        {% if auth.isAssigned() %}
+                            <li><a href="{{ urlFor('student.add_project') }}">My Project</a></li>
+                            <li><a href="{{ urlFor('student.add_scheduled_meeting') }}">Schedules</a></li>
+                            <li><a href="{{ urlFor('student.add_task') }}">Tasks</a></li>
+                        {% endif %}
                     {% endif %}
                     <!-- STUDENT NAVBAR LINKS -->
 

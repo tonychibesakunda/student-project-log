@@ -33,7 +33,10 @@
             <form action="{{ urlFor('student.add_project.post') }}" method="POST" autocomplete="off">
             
 <fieldset>
-            <legend class="text-center">Add Project</legend>
+            <legend class="text-center">Add on Existing Project</legend>
+            <div class="col-sm-12">
+            <button type="button" class="btn btn-link"><a href="{{ urlFor('student.existing_project') }}">&larr; Back</a></button>
+            </div>
             <div class="col-sm-6">
                 <div class="col-sm-12">
                     <div class="form-group">
@@ -61,7 +64,7 @@
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_description">Project Description</label>
-                        <textarea class="form-control" rows="5" id="project_description" aria-describedby="projectDescriptionHelp" placeholder="Add a brief description about your project" name="project_description">{% if request.post('project_description') %} {{request.post('project_description')}} {% endif %}</textarea>
+                        <textarea class="form-control" rows="5" id="project_description" aria-describedby="projectDescriptionHelp" placeholder="Add a brief description about your project" name="project_description"{% if request.post('project_description') %} value="{{request.post('project_description')}}" {% endif %}></textarea>
                         {% if errors.has('project_description')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_description')}}</small>{% endif %}
                     </div>
                 </div>
@@ -102,7 +105,7 @@
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_aim">Project Aim(s)</label>
-                        <textarea class="form-control" rows="5" id="project_aim" aria-describedby="projectDescriptionHelp" placeholder="Add your project aim(s)" name="project_aim">{% if request.post('project_aim') %} {{request.post('project_aim')}} {% endif %}</textarea>
+                        <textarea class="form-control" rows="5" id="project_aim" aria-describedby="projectDescriptionHelp" placeholder="Add your project aim(s)" name="project_aim"{% if request.post('project_aim') %} value="{{request.post('project_aim')}}" {% endif %}></textarea>
                         {% if errors.has('project_aim')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_aim')}}</small>{% endif %}
                     </div>
                 </div>
@@ -111,7 +114,6 @@
             <div class="col-sm-6">
                 <div class="col-sm-12">
                     <button type="submit" class="btn btn-primary">Add Project</button>
-                    <button type="button" class="btn btn-link"><a href="{{ urlFor('student.existing_project') }}">Add on existing project</a></button>
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
                 </div>
             </div>

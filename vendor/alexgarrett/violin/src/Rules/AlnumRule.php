@@ -8,7 +8,7 @@ class AlnumRule implements RuleContract
 {
     public function run($value, $input, $args)
     {
-        return (bool) preg_match('/^[\pL\pM\pN]+$/u', $value);
+        return (bool) preg_match('/^[\pL\pM\pN\s]+$/u', $value);
     }
 
     public function error()

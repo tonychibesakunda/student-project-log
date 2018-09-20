@@ -24,7 +24,7 @@ $app->get('/coordinator/students/add_student', $coordinator(), function() use($a
 })->name('coordinator.add_student');
 
 
-$app->post('/coordinator/students/add_student', $coordinator(),function() use($app){
+$app->post('/coordinator/students/add_student', $coordinator(), function() use($app){
 
 	$query = 'SELECT * FROM schools';
 	$query2 = 'SELECT * FROM departments';
@@ -56,8 +56,8 @@ $app->post('/coordinator/students/add_student', $coordinator(),function() use($a
 		'email' => [$email, 'required|email|uniqueEmail'],
 		'password' => [$password, 'required|min(8)'],
 		'password_confirm' => [$passwordConfirm, 'required|matches(password)'],
-		'selectSchool' => [$school, 'required'],
-		'selectDept' => [$dept, 'required']
+		'selectSchool' => [$school, 'int'],
+		'selectDept' => [$dept, 'int']
 	]);
 
 	if ($v->passes()){
@@ -80,10 +80,24 @@ $app->post('/coordinator/students/add_student', $coordinator(),function() use($a
 		//create permissions record and fill it with student default values
 		$user->permissions()->create(UserPermission::$studentDefault);
 
+		//insert records in locations table
 		$user->locations()->create([
 			'school_id' => $school,
 			'department_id' => $dept
 		]);
+
+		//insert records in students table
+		$user->students()->create([
+			'student_cat_id' => NULL,
+			'project_id' => NULL,
+			'project_start_date' => NULL,
+			'project_end_date' => NULL,
+			'project_aims' => NULL,
+			'final_project_report' => NULL,
+			'is_final_project_report_approved' => NULL,
+			'supervisor_comments' => NULL
+		]);
+
 		//die('Form Posted');
 		// Send email
 		$app->mail->send('email/auth/registered.php', ['user' => $user, 'identifier' => $identifier], function($message) use($user){

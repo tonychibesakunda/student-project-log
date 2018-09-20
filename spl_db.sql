@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 06, 2018 at 02:00 PM
+-- Generation Time: Sep 20, 2018 at 02:53 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -65,9 +65,13 @@ CREATE TABLE `locations` (
 --
 
 INSERT INTO `locations` (`location_id`, `user_id`, `school_id`, `department_id`, `created_at`, `updated_at`) VALUES
-(1, 36, NULL, 5, '2018-08-09 10:23:38', '2018-08-09 10:23:38'),
-(2, 37, 1, 6, '2018-08-09 10:27:48', '2018-08-09 10:27:48'),
-(3, 38, 1, 5, '2018-08-09 10:33:12', '2018-08-09 10:33:12');
+(13, 48, 1, 5, '2018-09-13 11:36:40', '2018-09-17 11:23:09'),
+(20, 54, 2, 7, '2018-09-14 07:35:13', '2018-09-17 10:48:37'),
+(21, 55, 1, 5, '2018-09-14 13:17:20', '2018-09-17 15:17:51'),
+(22, 56, 1, 5, '2018-09-17 10:05:14', '2018-09-17 10:05:14'),
+(23, 57, 1, 5, '2018-09-17 15:19:47', '2018-09-17 15:19:47'),
+(24, 58, 1, 6, '2018-09-18 15:49:31', '2018-09-18 15:49:31'),
+(25, 59, 1, 5, '2018-09-19 11:01:04', '2018-09-19 11:01:04');
 
 -- --------------------------------------------------------
 
@@ -78,11 +82,19 @@ INSERT INTO `locations` (`location_id`, `user_id`, `school_id`, `department_id`,
 CREATE TABLE `projects` (
   `project_id` int(11) NOT NULL,
   `project_name` varchar(255) DEFAULT NULL,
+  `project_description` text,
   `project_cat_id` int(11) DEFAULT NULL,
   `project_type_id` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `projects`
+--
+
+INSERT INTO `projects` (`project_id`, `project_name`, `project_description`, `project_cat_id`, `project_type_id`, `created_at`, `updated_at`) VALUES
+(3, 'Student Project Log', 'Web based system that will help students and supervisors keep track of student project activities efficiently ', 3, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -96,6 +108,15 @@ CREATE TABLE `project_categories` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `project_categories`
+--
+
+INSERT INTO `project_categories` (`project_cat_id`, `project_category`, `created_at`, `updated_at`) VALUES
+(3, 'Web Application', NULL, NULL),
+(4, 'Mobile Application', NULL, NULL),
+(5, 'Electronics', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -124,6 +145,14 @@ CREATE TABLE `project_types` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `project_types`
+--
+
+INSERT INTO `project_types` (`project_type_id`, `project_type`, `created_at`, `updated_at`) VALUES
+(1, 'Taught', '2018-09-15 20:18:06', '0000-00-00 00:00:00'),
+(2, 'Research', '2018-09-15 20:18:23', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -169,15 +198,27 @@ INSERT INTO `schools` (`school_id`, `school_name`, `created_at`, `updated_at`) V
 CREATE TABLE `students` (
   `student_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `student_cat_id` int(11) NOT NULL,
+  `student_cat_id` int(11) DEFAULT NULL,
   `project_id` int(11) DEFAULT NULL,
   `project_start_date` datetime DEFAULT NULL,
   `project_end_date` datetime DEFAULT NULL,
   `project_aims` text,
   `final_project_report` mediumblob,
+  `is_final_project_report_approved` tinyint(1) DEFAULT NULL,
+  `supervisor_comments` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `students`
+--
+
+INSERT INTO `students` (`student_id`, `user_id`, `student_cat_id`, `project_id`, `project_start_date`, `project_end_date`, `project_aims`, `final_project_report`, `is_final_project_report_approved`, `supervisor_comments`, `created_at`, `updated_at`) VALUES
+(6, 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-09-14 07:35:13', '2018-09-14 07:35:13'),
+(7, 56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-09-17 10:05:14', '2018-09-17 10:05:14'),
+(8, 58, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-09-18 15:49:31', '2018-09-18 15:49:31'),
+(9, 59, NULL, 3, '2018-09-20 00:00:00', '2018-10-19 00:00:00', 'Develop a web based student project log', NULL, NULL, NULL, '2018-09-20 10:58:35', '2018-09-20 10:58:35');
 
 -- --------------------------------------------------------
 
@@ -206,6 +247,17 @@ CREATE TABLE `supervisions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `supervisions`
+--
+
+INSERT INTO `supervisions` (`supervision_id`, `student_id`, `supervisor_id`, `created_at`, `updated_at`) VALUES
+(20, 7, 2, NULL, NULL),
+(23, 6, 2, NULL, NULL),
+(24, 8, 2, NULL, NULL),
+(26, 6, 1, NULL, NULL),
+(62, 9, 1, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -218,6 +270,14 @@ CREATE TABLE `supervisors` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `supervisors`
+--
+
+INSERT INTO `supervisors` (`supervisor_id`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 55, '2018-09-14 13:17:20', '2018-09-14 13:17:20'),
+(2, 57, '2018-09-17 15:19:47', '2018-09-17 15:19:47');
 
 -- --------------------------------------------------------
 
@@ -297,14 +357,14 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `other_names`, `email`, `password`, `photo`, `active`, `active_hash`, `recover_hash`, `remember_identifier`, `remember_token`, `created_at`, `updated_at`) VALUES
-(26, '14', 'Michelo', 'Mulenga', 'Jones', 'tonyyung21@gmail.com', '$2y$10$6T6BTOPit4q/fb6ms9UwWumJOmL3HEQVwyPVXu.k4VyD5EGuJYkCe', NULL, 1, NULL, NULL, NULL, NULL, '2018-08-08 09:06:12', '2018-08-08 09:06:12'),
-(30, '13', 'Tony', 'Chibesakunda', 'Mulenga', 'tonymchibesakunda@gmail.com', '$2y$10$evgaqMPOs6.LQZsBCnmKTOJg0oOBjSWH855NpJWtMtxCApOuh8WBK', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-06 09:55:04', '2018-09-06 09:55:04'),
-(31, '15', 'John', 'Doe', '', 't.chibesakunda@yahoo.com', '$2y$10$a3Bz/xTGy3qUGzyVFCQJ9u3Na1q.h1QwvK/DuSbGZez/0JDmcX7vO', NULL, 1, NULL, 'de212cf6c92897444df90d1cf6c10c38cfea1ad7cb4805c6b3211974e13d77f2', NULL, NULL, '2018-09-04 06:57:56', '2018-09-04 06:57:56'),
-(33, '11', 'Alfred', 'Mbewe', '', 'tc1a15@cs.unza.zm', '$2y$10$/MK/Y0BC8t2HVLP0wCYZP.Dyrdcy.yahVZdUq9k.jnaRJvOeKCb5W', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-06 09:56:48', '2018-09-06 09:56:48'),
-(34, '10', 'Mary', 'Moe', '', 'tonymulenga214.tc@gmail.com', '$2y$10$Is3Wf9g8VJVoS8biY.mgbeWvPh7Glq6ky/WtrTdpE6bzmrJh3nMRu', NULL, 1, NULL, NULL, 'bfEK3C04GH15vLzC2U16M1p4TT6S7ZSoHJq9p+aLL3ndvmvUqetjMCZH7OW6nGRZJ6+Rj6lpgbJ8IfTZF08IvpsbNTAqDfMelHdLq8OS9IPjzd7jEOF9vdfR+OGUi8Dp', 'fb4f52d5cff9e2209e05bcd02357992189476540f6da53ae93bf287dbb18cada', '2018-09-06 09:57:47', '2018-09-06 09:57:47'),
-(36, '17', 'James', 'Smith', '', 'th@dc.xc', '$2y$10$sJNU3Eo/W9OHdozZlJmQP.zb6ZaEdWdQkrkGzk4tB7lS/ZaQ9un6.', NULL, 0, '386bae3d6ccbafa73b0face24de2b039c8b16fb5e44c1d0a3fe1d237cf76cbdf', NULL, NULL, NULL, '2018-08-09 10:23:38', '2018-08-09 10:23:38'),
-(37, '18', 'Wayne', 'Rooney', '', 'sd@sd.xc', '$2y$10$AQ.beMU2H4ScVBsnbyQL.eamAejxRgWw4hkMhyyjHaaGTzb7sCOyS', NULL, 0, 'd85098747cde26edf2c7838cb0fe2d93e7ed0a588705192e08d4bc345ddfcdba', NULL, NULL, NULL, '2018-08-09 10:27:48', '2018-08-09 10:27:48'),
-(38, '19', 'dsed', 'ew', '', 'as@dsf.sd', '$2y$10$vwtXnTFoINNRsE9oBDk2V.BRsLnWL2aHOezD5tYfHcAukYBwgjlZm', NULL, 0, 'f928a8345854efaca7b2f54a8f917311c47a1e4d31ba269a1ef0f65ccfb91cd9', NULL, NULL, NULL, '2018-08-09 10:33:12', '2018-08-09 10:33:12');
+(34, '10', 'Mary', 'Moe', '', 'tonymulenga214.tc@gmail.com', '$2y$10$Is3Wf9g8VJVoS8biY.mgbeWvPh7Glq6ky/WtrTdpE6bzmrJh3nMRu', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-17 11:23:15', '2018-09-17 11:23:15'),
+(48, 'projectCoordinator', NULL, NULL, NULL, 'tonymchibesakunda@gmail.com', '$2y$10$pZQTfYVdjwxHBM/ZHecLOOttDYAi9p0a6G9HYU8Q5XJ24XfWg0y3u', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-20 11:01:30', '2018-09-20 11:01:30'),
+(54, '15', 'Musonda', 'Lombe', 'Denning', 'denninglombe1@gmail.com', '$2y$10$a1zlBFeBOesk5PnUazo0Te.x3zbsZ6K4QKiyoGM948JF/6RfIPN7S', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-20 11:47:43', '2018-09-20 11:47:43'),
+(55, '16', 'Mofya', 'Phiri', '', 'tonyyung21@gmail.com', '$2y$10$EH7wB/2NcII0v1LQaUvlfur7UdSFRbfBqJkeNVe1gnb0gTyYWEfzW', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-14 13:20:49', '2018-09-14 13:20:49'),
+(56, '14029049', 'Reuben', 'Shumba', '', 'shumbareuben@gmail.com', '$2y$10$CvZR4FouMXukLDBpkYaDOOSAyqxdFM2iB2/L6f5lAyc2My93Djkj2', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-17 15:30:51', '2018-09-17 15:30:51'),
+(57, 'hg', 'Tony', 'Chibesakunda', '', 's@dfd.hj', '$2y$10$Gks..511.HpshEBVJuFHKuVXqucU7eZsJTx5HYRSNwKG2NMqetiXS', NULL, 0, 'c3caecb6898d27bc7e5bb83d178639a44d9cc40ddaf6810bf89f9ff82ae31ec5', NULL, NULL, NULL, '2018-09-17 15:19:47', '2018-09-17 15:19:47'),
+(58, '17', 'Chipo', 'Mwandila', '', 'cs@xs.zx', '$2y$10$3WL/2DnCjhUra0c4v8.Leekd5hMt0ZU/nlVXXLMKZiWLTJp/iKQa.', NULL, 0, '2a54c2aee589e5f27f20d83f735cd0d643b6c88655953c0472eeb22bbef2e5cf', NULL, NULL, NULL, '2018-09-18 15:49:31', '2018-09-18 15:49:31'),
+(59, '1234', 'Tony', 'Mulenga', '', 't.chibesakunda@yahoo.com', '$2y$10$ZtegbDBCvj.McSENuplpWeN95nf9Rmxi3yJDXQRb8NtyeI93Favwm', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-20 11:00:38', '2018-09-20 11:00:38');
 
 -- --------------------------------------------------------
 
@@ -319,6 +379,7 @@ CREATE TABLE `users_permissions` (
   `is_coordinator` tinyint(1) NOT NULL,
   `is_supervisor` tinyint(1) NOT NULL,
   `is_student` tinyint(1) NOT NULL,
+  `is_assigned` tinyint(1) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -327,14 +388,16 @@ CREATE TABLE `users_permissions` (
 -- Dumping data for table `users_permissions`
 --
 
-INSERT INTO `users_permissions` (`id`, `user_id`, `is_hod`, `is_coordinator`, `is_supervisor`, `is_student`, `created_at`, `updated_at`) VALUES
-(4, 30, 0, 0, 0, 1, '2018-08-03 16:42:23', '2018-08-03 16:42:23'),
-(5, 31, 0, 1, 0, 0, '2018-08-03 16:48:26', '2018-08-03 16:48:26'),
-(6, 33, 0, 0, 1, 0, '2018-08-04 18:05:07', '2018-08-04 18:05:07'),
-(7, 34, 1, 0, 0, 0, '2018-08-04 18:10:43', '2018-08-04 18:10:43'),
-(9, 36, 0, 0, 0, 1, '2018-08-09 10:23:38', '2018-08-09 10:23:38'),
-(10, 37, 0, 0, 0, 1, '2018-08-09 10:27:48', '2018-08-09 10:27:48'),
-(11, 38, 0, 0, 0, 1, '2018-08-09 10:33:12', '2018-08-09 10:33:12');
+INSERT INTO `users_permissions` (`id`, `user_id`, `is_hod`, `is_coordinator`, `is_supervisor`, `is_student`, `is_assigned`, `created_at`, `updated_at`) VALUES
+(7, 34, 1, 0, 0, 0, 0, '2018-08-04 18:10:43', '2018-08-04 18:10:43'),
+(21, 47, 0, 0, 0, 1, 0, '2018-09-12 19:52:57', '2018-09-12 19:52:57'),
+(22, 48, 0, 1, 0, 0, 0, '2018-09-13 11:36:40', '2018-09-13 11:36:40'),
+(28, 54, 0, 0, 0, 1, 1, '2018-09-14 07:35:13', '2018-09-19 09:26:58'),
+(29, 55, 0, 0, 1, 0, 1, '2018-09-14 13:17:20', '2018-09-19 09:49:40'),
+(30, 56, 0, 0, 0, 1, 1, '2018-09-17 10:05:14', '2018-09-19 09:22:47'),
+(31, 57, 0, 0, 1, 0, 1, '2018-09-17 15:19:47', '2018-09-19 09:22:47'),
+(32, 58, 0, 0, 0, 1, 1, '2018-09-18 15:49:31', '2018-09-18 15:49:31'),
+(33, 59, 0, 0, 0, 1, 1, '2018-09-19 11:01:04', '2018-09-19 13:05:21');
 
 --
 -- Indexes for dumped tables
@@ -352,8 +415,8 @@ ALTER TABLE `departments`
 ALTER TABLE `locations`
   ADD PRIMARY KEY (`location_id`),
   ADD KEY `school_id` (`school_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `department_id` (`department_id`);
+  ADD KEY `department_id` (`department_id`),
+  ADD KEY `locations_ibfk_2` (`user_id`);
 
 --
 -- Indexes for table `projects`
@@ -400,9 +463,9 @@ ALTER TABLE `schools`
 --
 ALTER TABLE `students`
   ADD PRIMARY KEY (`student_id`),
-  ADD KEY `user_id` (`user_id`),
   ADD KEY `project_id` (`project_id`),
-  ADD KEY `student_cat_id` (`student_cat_id`);
+  ADD KEY `student_cat_id` (`student_cat_id`),
+  ADD KEY `students_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `student_categories`
@@ -423,7 +486,7 @@ ALTER TABLE `supervisions`
 --
 ALTER TABLE `supervisors`
   ADD PRIMARY KEY (`supervisor_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `supervisors_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `supervisory_meetings`
@@ -471,17 +534,17 @@ ALTER TABLE `departments`
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `project_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `project_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `project_categories`
 --
 ALTER TABLE `project_categories`
-  MODIFY `project_cat_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `project_cat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `project_objectives`
 --
@@ -491,7 +554,7 @@ ALTER TABLE `project_objectives`
 -- AUTO_INCREMENT for table `project_types`
 --
 ALTER TABLE `project_types`
-  MODIFY `project_type_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `project_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `scheduled_meetings`
 --
@@ -506,7 +569,7 @@ ALTER TABLE `schools`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `student_categories`
 --
@@ -516,12 +579,12 @@ ALTER TABLE `student_categories`
 -- AUTO_INCREMENT for table `supervisions`
 --
 ALTER TABLE `supervisions`
-  MODIFY `supervision_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `supervision_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 --
 -- AUTO_INCREMENT for table `supervisors`
 --
 ALTER TABLE `supervisors`
-  MODIFY `supervisor_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `supervisor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `supervisory_meetings`
 --
@@ -541,12 +604,12 @@ ALTER TABLE `tasks`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 --
 -- AUTO_INCREMENT for table `users_permissions`
 --
 ALTER TABLE `users_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 --
 -- Constraints for dumped tables
 --
@@ -556,7 +619,7 @@ ALTER TABLE `users_permissions`
 --
 ALTER TABLE `locations`
   ADD CONSTRAINT `locations_ibfk_1` FOREIGN KEY (`school_id`) REFERENCES `schools` (`school_id`),
-  ADD CONSTRAINT `locations_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `locations_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `locations_ibfk_3` FOREIGN KEY (`department_id`) REFERENCES `departments` (`department_id`);
 
 --
@@ -582,7 +645,7 @@ ALTER TABLE `scheduled_meetings`
 -- Constraints for table `students`
 --
 ALTER TABLE `students`
-  ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `students_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`),
   ADD CONSTRAINT `students_ibfk_3` FOREIGN KEY (`student_cat_id`) REFERENCES `student_categories` (`student_cat_id`);
 
@@ -597,7 +660,7 @@ ALTER TABLE `supervisions`
 -- Constraints for table `supervisors`
 --
 ALTER TABLE `supervisors`
-  ADD CONSTRAINT `supervisors_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `supervisors_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `supervisory_meetings`

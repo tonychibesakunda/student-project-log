@@ -16,24 +16,75 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('hod.edit_coordinator.post') }}" method="POST" autocomplete="off">
-            
+
+            {% for row in userInfo %}
+            <form action="{{ urlFor('hod.edit_coordinator.post', {id: row.id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
             <legend class="text-center">Edit Coordinator Account</legend>
             
             <div class="col-sm-6">
-                <div class="form-group">
-                    <label for="user_name">Username</label>
-                    <input type="text" class="form-control" id="user_name" aria-describedby="userNameHelp" placeholder="Enter username" name="user_name"value="{{ request.post('user_name') ? request.post('user_name') : user.username }}" required readonly>
-                    {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %}
+
+                <div class="panel panel-info">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Current Information</h3>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" name="email" value="{{ request.post('email') ? request.post('email') : user.email }}" required>
-                    {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-sm-12 col-lg-12 table-responsive"> 
+                      <table class="table table-user-information">
+                        <tbody>
+                            <tr>
+                                <td><label for="user_name">Username:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.username }}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="user_name" id="user_name" value="{{ request.post('user_name') ? request.post('user_name') : user.username }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="email">Email address:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.email }}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="email" id="email" value="{{ request.post('email') ? request.post('email') : user.email }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="School">School:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.school_name }}</p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="Department">Department:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.department_name }}</p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="Account">Account Created at:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.created_at }}</p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
             </div>
 
+            </div>
+            
             <div class="col-sm-6">
 
                 <div class="form-group">
@@ -43,8 +94,14 @@
                             <option>No school records</option>
                         {% else %}
                             <option value="no">-- select school --</option>
-                            {% for school in schools %}
-                            <option value="{{ school.school_id }}">{{ school.school_name }}</option>
+                            {% for row in userInfo %}
+                                {% for school in schools %}
+                                    {% if row.school_id == school.school_id %}
+                                        <option value="{{ school.school_id }}" selected>{{ school.school_name }}</option>    
+                                    {% else %}
+                                        <option value="{{ school.school_id }}">{{ school.school_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             {% endfor %}
                         {% endif %}
                       </select>
@@ -58,8 +115,14 @@
                             <option>No department records</option>
                         {% else %}
                             <option value="no">-- select department --</option>
-                            {% for dept in departments %}
-                            <option value="{{ dept.department_id }}">{{ dept.department_name }}</option>
+                            {% for row in userInfo %}
+                                {% for dept in departments %}
+                                    {% if row.department_id == dept.department_id %}
+                                        <option value="{{ dept.department_id }}" selected>{{ dept.department_name }}</option>    
+                                    {% else %}
+                                        <option value="{{ dept.department_id }}">{{ dept.department_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             {% endfor %}
                         {% endif %}
                       </select>

@@ -47,7 +47,8 @@
           {% include 'templates/partials/success_messages.php' %}
           {% include 'templates/partials/info_messages.php' %}
           {% include 'templates/partials/warning_messages.php' %}
-          <form action="{{ urlFor('coordinator.edit_project_category.post') }}" method="POST" autocomplete="off">
+
+          <form action="{{ urlFor('coordinator.edit_project_category.post', {id: projectCat.project_cat_id}) }}" method="POST" autocomplete="off">
           
 <fieldset>
           <legend class="text-center">Edit Project Category</legend>
@@ -59,11 +60,12 @@
             <div class="form-group">
 
                     <label for="project_category">Project Category</label>
-                    <input type="text" class="form-control" id="project_category" aria-describedby="project_categoryHelp" placeholder="Enter project category" name="project_category"{% if request.post('project_category') %} value="{{request.post('project_category')}}" {% endif %}>
+                    <input type="hidden" name="project_cat" value="{{ request.post('project_cat') ? request.post('project_cat') : projectCat.project_category }}">
+                    <input type="text" class="form-control" id="project_category" aria-describedby="project_categoryHelp" placeholder="Enter project category" name="project_category" value="{{ request.post('project_category') ? request.post('project_category') : projectCat.project_category }}">
                     {% if errors.has('project_category')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_category')}}</small>{% endif %}
                 </div>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <button type="submit" class="btn btn-link"><a href="{{ urlFor('coordinator.view_project_category') }}">&larr; Back</a></button>
+                <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
+                <button type="submit" class="btn btn-link" name="back"><a href="{{ urlFor('coordinator.view_project_category') }}">&larr; Back</a></button>
           </div>
           <div class="col-sm-2"></div>
          

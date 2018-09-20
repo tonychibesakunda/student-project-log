@@ -23,18 +23,7 @@
                   <img alt="User Pic" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" class="img-circle img-responsive"> 
                 </div>
                 
-                <!--<div class="col-xs-10 col-sm-10 hidden-md hidden-lg"> <br>http://babyinfoforyou.com/wp-content/uploads/2014/10/avatar-300x300.png
-                  <dl>
-                    <dt>DEPARTMENT:</dt>
-                    <dd>Administrator</dd>
-                    <dt>HIRE DATE</dt>
-                    <dd>11/12/2013</dd>
-                    <dt>DATE OF BIRTH</dt>
-                       <dd>11/12/2013</dd>
-                    <dt>GENDER</dt>
-                    <dd>Male</dd>
-                  </dl>
-                </div>-->
+                
                 <div class=" col-md-9 col-lg-9 "> 
                   <table class="table table-user-information">
                     <tbody>

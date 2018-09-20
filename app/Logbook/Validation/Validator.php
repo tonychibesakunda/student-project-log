@@ -10,6 +10,7 @@ namespace Logbook\Validation;
 use Violin\Violin;
 
 use Logbook\User\User;
+use Logbook\User\ProjectCategory;
 use Logbook\Helpers\Hash;
 
 class Validator extends Violin{
@@ -48,6 +49,35 @@ class Validator extends Violin{
 			],
 			'selectDept' => [
 				'int' => 'You need to select a department'
+			],
+			'project_category' => [
+				'required' => 'project category is required',
+				'int' => 'You need to select a project category'
+			],
+			'project_type' => [
+				'required' => 'project type is required',
+				'int' => 'You need to select a project type'
+			],
+			'selectStudent' => [
+				'int' => 'You need to select a student'
+			],
+			'selectSupervisor' => [
+				'int' => 'You need to select a supervisor'
+			],
+			'project_name' => [
+				'required' => 'project name is required'
+			],
+			'project_description' => [
+				'required' => 'project description is required'
+			],
+			'project_start_date' => [
+				'required' => 'project start date is required'
+			],
+			'project_end_date' => [
+				'required' => 'project end date is required'
+			],
+			'project_aim' => [
+				'required' => 'project aim(s) is required'
 			]
 		]);
 
@@ -61,10 +91,10 @@ class Validator extends Violin{
 		$user = $this->user->where('email', $value);
 
 		//ignore current email when updating if the same email is passed
-		if($this->auth && $this->auth->email = $value){
+		if($this->auth && $this->auth->email === $value){
 			return true;
 		}
-
+		
 		return ! (bool) $user->count();
 	}
 
@@ -73,7 +103,7 @@ class Validator extends Violin{
 		$user = $this->user->where('username', $value);
 
 		//ignore current username when updating if the same username is passed
-		if($this->auth && $this->auth->username = $value){
+		if($this->auth && $this->auth->username === $value){
 			return true;
 		}
 

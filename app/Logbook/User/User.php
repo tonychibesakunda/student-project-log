@@ -84,6 +84,10 @@ class User extends Eloquent{
 		return $this->hasPermission('is_student');
 	}
 
+	public function isAssigned(){
+		return $this->hasPermission('is_assigned');
+	}
+
 	//relate users model to users permissions model
 	public function permissions(){
 		return $this->hasOne('Logbook\User\UserPermission', 'user_id');

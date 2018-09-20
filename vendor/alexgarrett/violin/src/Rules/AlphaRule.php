@@ -8,7 +8,7 @@ class AlphaRule implements RuleContract
 {
     public function run($value, $input, $args)
     {
-        return (bool) preg_match('/^[\pL\pM]+$/u', $value);
+        return (bool) preg_match('/^[\pL\pM\s]+$/u', $value);
     }
 
     public function error()

@@ -23,22 +23,22 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="user_name">Username</label>
-                    <input type="text" class="form-control" id="user_name" aria-describedby="userNameHelp" placeholder="Enter username" name="user_name"{% if request.post('user_name') %} value="{{request.post('user_name')}}" {% endif %}>
+                    <input type="text" class="form-control" id="user_name" aria-describedby="userNameHelp" placeholder="Enter username" name="user_name"{% if request.post('user_name') %} value="{{request.post('user_name')}}" {% endif %} required>
                     {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %}
                 </div>
                 <div class="form-group">
                     <label for="email">Email address</label>
-                    <input type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" name="email"{% if request.post('email') %} value="{{request.post('email')}}" {% endif %}>
+                    <input type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" name="email"{% if request.post('email') %} value="{{request.post('email')}}" {% endif %} required>
                     {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                    <input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
                     {% if errors.has('password')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password')}}</small>{% endif %}
                 </div>
                 <div class="form-group">
                     <label for="password_confirm">Confirm Password</label>
-                    <input type="password" class="form-control" id="password_confirm" placeholder="Password" name="password_confirm">
+                    <input type="password" class="form-control" id="password_confirm" placeholder="Password" name="password_confirm" required>
                     {% if errors.has('password_confirm')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password_confirm')}}</small>{% endif %}
                 </div>
                 

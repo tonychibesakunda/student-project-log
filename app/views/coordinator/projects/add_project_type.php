@@ -52,18 +52,18 @@
 <fieldset>
           <legend class="text-center">Add Project Type</legend>
 
-          <div class="col-sm-2"></div>
+          <div class="col-sm-3"></div>
 
-          <div class="col-sm-8">
+          <div class="col-sm-6">
             
             <div class="form-group">
                     <label for="project_type">Project Type</label>
-                    <input type="text" class="form-control" id="project_type" aria-describedby="project_typeHelp" placeholder="Enter project type" name="project_type"{% if request.post('project_type') %} value="{{request.post('project_type')}}" {% endif %}>
+                    <input type="text" class="form-control" id="project_type" aria-describedby="project_typeHelp" placeholder="Enter project type" name="project_type"{% if request.post('project_type') %} value="{{request.post('project_type')}}" {% endif %} required>
                     {% if errors.has('project_type')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_type')}}</small>{% endif %}
                 </div>
                 <button type="submit" class="btn btn-primary">Add Type</button>
           </div>
-          <div class="col-sm-2"></div>
+          <div class="col-sm-3"></div>
          
             <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
 

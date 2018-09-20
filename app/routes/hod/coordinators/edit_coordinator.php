@@ -8,14 +8,15 @@ use Logbook\User\Department;
 
 use Illuminate\Database\Capsule\Manager as DB;
 
-$app->get('/hod/coordinators/edit_coordinator/:username', $hod(), function($username) use($app){
+$app->get('/hod/coordinators/edit_coordinator/:id', $hod(), function($userId) use($app){
 
 
 	$query = 'SELECT * FROM schools';
 	$query2 = 'SELECT * FROM departments';
+	$query3 = "SELECT users.*, locations.user_id, locations.school_id, locations.department_id, schools.school_id, schools.school_name, departments.department_id, departments.department_name FROM users INNER JOIN locations ON users.id=locations.user_id INNER JOIN schools ON locations.school_id=schools.school_id INNER JOIN departments ON locations.department_id=departments.department_id WHERE id='$userId'";
 	$schools = DB::select(DB::raw($query));
 	$departments = DB::select(DB::raw($query2));
-
+	$userInfo = DB::select(DB::raw($query3));
 
 	//check if user exists
 	$user = DB::table('users')
@@ -30,7 +31,7 @@ $app->get('/hod/coordinators/edit_coordinator/:username', $hod(), function($user
                 'locations',
                 'users.id','=','locations.user_id'
             )
-            ->where(['users.username' => $username])
+            ->where(['users.id' => $userId])
             ->first();
 	//$user = $app->user->where('username', $username)->first();
 
@@ -41,20 +42,24 @@ $app->get('/hod/coordinators/edit_coordinator/:username', $hod(), function($user
 
 	$app->render('hod/coordinators/edit_coordinator.php',[
 		'user' => $user,
+		'userInfo' => $userInfo,
 		'schools' => $schools,
 		'departments' => $departments
 	]);
 
 })->name('hod.edit_coordinator');
 
-$app->post('/hod/coordinators/edit_coordinator', $hod(), function() use($app){
+$app->post('/hod/coordinators/edit_coordinator/:id', $hod(), function($userId) use($app){
 	if(isset($_POST['save'])){
 		$query = 'SELECT * FROM schools';
 		$query2 = 'SELECT * FROM departments';
+		$query3 = "SELECT users.*, locations.user_id, locations.school_id, locations.department_id, schools.school_id, schools.school_name, departments.department_id, departments.department_name FROM users INNER JOIN locations ON users.id=locations.user_id INNER JOIN schools ON locations.school_id=schools.school_id INNER JOIN departments ON locations.department_id=departments.department_id WHERE id='$userId'";
+
 		$schools = DB::select(DB::raw($query));
 		$departments = DB::select(DB::raw($query2));
+		$userInfo = DB::select(DB::raw($query3));
 
-
+		
 		$request = $app->request;
 
 		//get user input
@@ -67,8 +72,6 @@ $app->post('/hod/coordinators/edit_coordinator', $hod(), function() use($app){
 		$v = $app->validation;
 
 		$v->validate([
-			'username' => [$username, 'required|alnumDash|max(150)|uniqueUsername'],
-			'email' => [$email, 'required|email|uniqueEmail'],
 			'selectSchool' => [$school, 'int'],
 			'selectDept' => [$dept, 'int']
 		]);
@@ -78,17 +81,12 @@ $app->post('/hod/coordinators/edit_coordinator', $hod(), function() use($app){
 			$get_id = "SELECT id FROM users WHERE username = '".$username."'";
 			$user_id = DB::select(DB::raw($get_id)); //runs the sql query above
 			
-			$userId;
+			
 			foreach ($user_id as $row) {
 				$userId = $row->id;
 			}
 
 			//update the user table and location table using their respective models
-			User::where('id', '=', $userId)
-				    ->update([
-				        'username' => $username,
-				        'email' => $email
-				    ]);
 			Location::where('user_id', '=', $userId)
 						->update([
 							'school_id' => $school,
@@ -98,13 +96,14 @@ $app->post('/hod/coordinators/edit_coordinator', $hod(), function() use($app){
 			
 			
 			$app->flash('success', "Project coordinator details have been successfully updated.");
-			return $app->response->redirect($app->urlFor('hod.edit_coordinator', array('username' => $username)));
+			return $app->response->redirect($app->urlFor('hod.edit_coordinator', array('id' => $userId)));
 		}
 
 		//pass errors into view and save previous type info
 		$app->render('hod/coordinators/edit_coordinator.php', [
 			'errors' => $v->errors(),
 			'request' => $request,
+			'userInfo' => $userInfo,
 			'schools' => $schools,
 			'departments' => $departments
 		]);

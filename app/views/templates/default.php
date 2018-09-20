@@ -310,6 +310,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
     $('#myTable').DataTable();
+    $('#myTable1').DataTable();
     } );
 
    $(function() {

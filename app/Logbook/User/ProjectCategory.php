@@ -11,6 +11,7 @@ class ProjectCategory extends Eloquent{
 	protected $table = 'project_categories';
 
 	protected $fillable = [
+		'project_cat_id',
 		'project_category'
 	];
 

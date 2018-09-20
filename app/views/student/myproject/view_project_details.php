@@ -34,25 +34,37 @@
             
 <fieldset>
             <legend class="text-center">View Project Details</legend>
+            {% if projects is empty %}
+
+                <h2 style="color: gray; text-align: center;"><b>You have not yet added a project to the system!<b></h2>
+            {% else %}
             <div class="col-sm-6">
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_name">Project Name:</label>
-                        <p>Student Project Logbook</p>
-                        {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %}
+                        {% for project in projects %}
+                            <p>{{ project.project_name }}</p>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_category">Project Category</label>
-                        <p>Project Category</p>
+                        {% for project in projects %}
+                            {% for pc in project_categories %}
+                                {% if project.project_cat_id == pc.project_cat_id %}
+                                    <p>{{ pc.project_category }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_description">Project Description:</label>
-                        <p>this project will what and what</p>
-                        {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
+                        {% for project in projects %}
+                            <p>{{ project.project_description }}</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -62,46 +74,48 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="project_start_date">Project start date:</label>
-                        <p>12-Aug-2018</p>
-                        {% if errors.has('password')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password')}}</small>{% endif %}
+                        {% for project in projects %}
+                            <p>{{ project.project_start_date|date("d-M-Y") }}</p>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="project_end_date">Project end date:</label>
-                        <p>10-Oct-2018</p>
-                        {% if errors.has('password')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password')}}</small>{% endif %}
+                        {% for project in projects %}
+                            <p>{{ project.project_end_date|date("d-M-Y") }}</p>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_type">Project Type</label>
-                        <p>Project Type</p>
+                        {% for project in projects %}
+                            {% for pt in project_types %}
+                                {% if project.project_type_id == pt.project_type_id %}
+                                    <p>{{ pt.project_type }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_aim">Project Aim(s):</label>
-                        <p>To develop a web based system that keeps track of a student's project</p>
-                        {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
+                        {% for project in projects %}
+                            <p>{{ project.project_aims }}</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
 
-            <!--<div class="form-group form-inline">
-                <label for="accountStatus">Account status:</label>
-                <select class="form-control" id="accountStatus" style="width: 10%;">
-                    <option>Active</option>
-                    <option>Inactive</option>
-                  </select>
-            </div>-->
-            <div class="col-sm-6">
-                <div class="col-sm-12">
-                    <button type="submit" class="btn btn-link"><a href="{{ urlFor('student.edit_project') }}">Edit Details</a></button>
+            <div class="col-sm-12">
+                    {% for project in projects %}
+                    <button type="submit" class="btn btn-link"><a href="{{ urlFor('student.edit_project', {id:project.project_id}) }}">Edit Details</a></button>
+                    {% endfor %}
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
-                </div>
             </div>
-            <div class="col-sm-6"></div>
+        {% endif %}
         </fieldset>
     </form>
     </div>

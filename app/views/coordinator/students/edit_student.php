@@ -16,27 +16,104 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('coordinator.edit_student.post') }}" method="POST" autocomplete="off">
-            
+
+            {% for row in userInfo %}
+            <form action="{{ urlFor('coordinator.edit_student.post', {id: row.id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
             <legend class="text-center">Edit Student Account</legend>
             <div class="col-sm-6">
-                <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input type="text" class="form-control" id="first_name" aria-describedby="firstNameHelp" placeholder="Enter first name" name="first_name"{% if request.post('first_name') %} value="{{request.post('first_name')}}" {% endif %}>
-                    {% if errors.has('first_name')%}<small class="form-text text-muted" style="color: red;">{{errors.first('first_name')}}</small>{% endif %}
+
+
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Current Information</h3>
                 </div>
-                <div class="form-group">
-                    <label for="last_name">Last Name</label>
-                    <input type="text" class="form-control" id="last_name" aria-describedby="lastNameHelp" placeholder="Enter last name" name="last_name"{% if request.post('last_name') %} value="{{request.post('last_name')}}" {% endif %}>
-                    {% if errors.has('last_name')%}<small class="form-text text-muted" style="color: red;">{{errors.first('last_name')}}</small>{% endif %}
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-sm-12 col-lg-12 table-responsive"> 
+                      <table class="table table-user-information">
+                        <tbody>
+                            <tr>
+                                <td><label for="firstName">First Name:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.first_name }}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="first_name" id="firstName" value="{{ request.post('first_name') ? request.post('first_name') : user.first_name }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="last_name">Last Name:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.last_name }}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="last_name" id="last_name" value="{{ request.post('last_name') ? request.post('last_name') : user.last_name }}"> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="other_names">Other Names:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{% if row.other_names is empty %} {% else %}{{ row.other_names }}{% endif %}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="other_names" id="other_names" value="{{ request.post('other_names') ? request.post('other_names') : user.other_names }}"> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="user_name">Username:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.username }}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="user_name" id="user_name" value="{{ request.post('user_name') ? request.post('user_name') : user.username }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="email">Email address:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.email }}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="email" id="email" value="{{ request.post('email') ? request.post('email') : user.email }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="School">School:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.school_name }}</p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="Department">Department:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.department_name }}</p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="Account">Account Created at:</label></td>
+                                <td>
+                                    {% for row in userInfo %}
+                                    <p>{{ row.created_at }}</p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
-                <div class="form-group">
-                    <label for="other_names">Other Names</label>
-                    <input type="text" class="form-control" id="other_names" aria-describedby="otherNamesHelp" placeholder="Enter other names" name="other_names"{% if request.post('other_names') %} value="{{request.post('other_names')}}" {% endif %}>
-                    {% if errors.has('other_names')%}<small class="form-text text-muted" style="color: red;">{{errors.first('other_names')}}</small>{% endif %}
-                </div>
-                
+            </div>
+
+            </div>
+
+            <div class="col-sm-6">
+
                 <div class="form-group">
                     <label for="selectSchool">School:</label>
 
@@ -45,11 +122,18 @@
                             <option>No school records</option>
                         {% else %}
                             <option>-- select school --</option>
-                            {% for school in schools %}
-                            <option value="{{ school.school_id }}">{{ school.school_name }}</option>
+                            {% for row in userInfo %}
+                                {% for school in schools %}
+                                    {% if row.school_id == school.school_id %}
+                                        <option value="{{ school.school_id }}" selected>{{ school.school_name }}</option>    
+                                    {% else %}
+                                        <option value="{{ school.school_id }}">{{ school.school_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             {% endfor %}
                         {% endif %}
-                      </select>
+                    </select>
+                    {% if errors.has('selectSchool')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectSchool')}}</small>{% endif %}
                 </div>
                    
                 <div class="form-group">
@@ -59,50 +143,25 @@
                             <option>No department records</option>
                         {% else %}
                             <option>-- select department --</option>
-                            {% for dept in departments %}
-                            <option value="{{ dept.department_id }}">{{ dept.department_name }}</option>
+                            {% for row in userInfo %}
+                                {% for dept in departments %}
+                                    {% if row.department_id == dept.department_id %}
+                                        <option value="{{ dept.department_id }}" selected>{{ dept.department_name }}</option>    
+                                    {% else %}
+                                        <option value="{{ dept.department_id }}">{{ dept.department_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             {% endfor %}
                         {% endif %}
                       </select>
+                      {% if errors.has('selectDept')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectDept')}}</small>{% endif %}
                 </div>
 
             </div>
 
-            <div class="col-sm-6">
-
-                <div class="form-group">
-                    <label for="user_name">Username</label>
-                    <input type="text" class="form-control" id="user_name" aria-describedby="userNameHelp" placeholder="Enter username" name="user_name"{% if request.post('user_name') %} value="{{request.post('user_name')}}" {% endif %}>
-                    {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" name="email"{% if request.post('email') %} value="{{request.post('email')}}" {% endif %}>
-                    {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Password" name="password">
-                    {% if errors.has('password')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password')}}</small>{% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="password_confirm">Confirm Password</label>
-                    <input type="password" class="form-control" id="password_confirm" placeholder="Password" name="password_confirm">
-                    {% if errors.has('password_confirm')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password_confirm')}}</small>{% endif %}
-                </div>
-
-            </div>
-
-            <!--<div class="form-group form-inline">
-                <label for="accountStatus">Account status:</label>
-                <select class="form-control" id="accountStatus" style="width: 10%;">
-                    <option>Active</option>
-                    <option>Inactive</option>
-                  </select>
-            </div>-->
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <button type="submit" class="btn btn-link"><a href="{{ urlFor('coordinator.view_student') }}">&larr;Back</a></button>
+                <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
+                <button type="submit" class="btn btn-link" name="back"><a href="{{ urlFor('coordinator.view_student') }}">&larr;Back</a></button>
                 <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
             </div>
             

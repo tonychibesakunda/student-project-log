@@ -47,8 +47,9 @@
           {% include 'templates/partials/success_messages.php' %}
           {% include 'templates/partials/info_messages.php' %}
           {% include 'templates/partials/warning_messages.php' %}
-          <form action="{{ urlFor('coordinator.edit_assigned_supervisors.post') }}" method="POST" autocomplete="off">
-          
+          {% for sp in supervision %}
+          <form action="{{ urlFor('coordinator.edit_assigned_supervisors.post', {id: sp.supervision_id}) }}" method="POST" autocomplete="off">
+          {% endfor %}
 <fieldset>
           <legend class="text-center">Edit Assigned Supervisors</legend>
 
@@ -59,23 +60,47 @@
             <div class="form-group">
               <label for="selectStudent">Student:</label>
               <select class="form-control" id="selectStudent" name="selectStudent">
-                <option>-- select student --</option>
-                <option>James McCarthy</option>
-                <option>John Doe</option>
+                {% if supervision is empty %}
+                  <option> No student records</option>
+                {% else %}
+                  <option>-- select student --</option>
+                {% for sp in supervision %}
+                {% for student in students %}
+                    {% if sp.student_id == student.student_id %}
+                      <option value="{{ student.student_id }}" selected>{{ student.first_name }} {{ student.other_names }} {{ student.last_name }}</option>
+                    {% else %}
+                      <option value="{{ student.student_id }}">{{ student.first_name }} {{ student.other_names }} {{ student.last_name }}</option>
+                    {% endif %}
+                {% endfor %} 
+                {% endfor %}
+                {% endif %}
               </select>
+              {% if errors.has('selectStudent')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectStudent')}}</small>{% endif %}
             </div>
 
             <div class="form-group">
               <label for="selectSupervisor">Supervisor:</label>
               <select class="form-control" id="selectSupervisor" name="selectSupervisor">
-                <option>-- select supervisor --</option>
-                <option>Mary Moe</option>
-                <option>John Doe</option>
+                {% if supervision is empty %}
+                  <option> No student records</option>
+                {% else %}
+                  <option>-- select student --</option>
+                {% for sp in supervision %}
+                {% for supervisor in supervisors %}
+                    {% if sp.supervisor_id == supervisor.supervisor_id %}
+                      <option value="{{ supervisor.supervisor_id }}" selected>{{ supervisor.first_name }} {{ supervisor.other_names }} {{ supervisor.last_name }}</option>
+                    {% else %}
+                      <option value="{{ supervisor.supervisor_id }}">{{ supervisor.first_name }} {{ supervisor.other_names }} {{ supervisor.last_name }}</option>
+                    {% endif %}
+                {% endfor %} 
+                {% endfor %}
+                {% endif %}  
               </select>
+              {% if errors.has('selectSupervisor')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectSupervisor')}}</small>{% endif %}
             </div>
             
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <button type="submit" class="btn btn-link"><a href="{{ urlFor('coordinator.view_assigned_supervisors') }}">&larr; Back</a></button>
+            <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
+            <button type="submit" class="btn btn-link" name="back"><a href="{{ urlFor('coordinator.view_assigned_supervisors') }}">&larr; Back</a></button>
           </div>
           <div class="col-sm-2"></div>
          

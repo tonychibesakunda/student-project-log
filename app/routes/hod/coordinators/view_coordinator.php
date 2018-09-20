@@ -6,6 +6,7 @@ use Logbook\User\Location;
 use Illuminate\Database\Capsule\Manager as DB;
 $app->get('/hod/coordinators/view_coordinator', $hod(), function() use($app){
 
+    //get coordinator details
 	$coordinators = DB::table('users')
             ->select(
             	'users.id',

@@ -43,7 +43,7 @@
                                         <input type="hidden" name="_METHOD" value="DELETE">
                                         <td>{{ coordinator.username }}</td>
                                         <td>{{ coordinator.email }}</td>
-                                        <td><button type='button' class='btn btn-link' name="edit"><a href="{{ urlFor('hod.edit_coordinator', {username: coordinator.username}) }}">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ coordinator.id }}'>Delete</button></td>
+                                        <td><button type='button' class='btn btn-link' name="edit"><a href="{{ urlFor('hod.edit_coordinator', {id: coordinator.id}) }}">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ coordinator.id }}'>Delete</button></td>
                                     </tr>
                                     {% endfor %}   
                                 {% endif %}    

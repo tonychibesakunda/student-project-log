@@ -3,7 +3,7 @@
 {% block title %}Assign Supervisors{% endblock %}
 
 {% block content %}
-	<div class="container-fluid text-center">
+	<div class="container-fluid text-center" style="margin-bottom: 10%;">
     <div class="row content"><br>
 
         <div class="col-sm-2 sidenav">
@@ -52,36 +52,114 @@
 <fieldset>
           <legend class="text-center">Assign Supervisors</legend>
 
-          <div class="col-sm-2"></div>
+          <div class="col-sm-3"></div>
 
-          <div class="col-sm-8">
+          <div class="col-sm-6">
             
             <div class="form-group">
               <label for="selectStudent">Student:</label>
               <select class="form-control" id="selectStudent" name="selectStudent">
-                <option>-- select student --</option>
-                <option>James McCarthy</option>
-                <option>John Doe</option>
+                {% if students is empty %}
+                    <option>No student records</option>
+                {% else %}
+                    <option>-- select student --</option>
+                    {% for student in students %}
+                    <option value="{{ student.id }}">{{ student.first_name }} {{ student.other_names }} {{ student.last_name }}</option>
+                    {% endfor %}
+                {% endif %}
               </select>
+              {% if errors.has('selectStudent')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectStudent')}}</small>{% endif %}
             </div>
 
             <div class="form-group">
               <label for="selectSupervisor">Supervisor:</label>
               <select class="form-control" id="selectSupervisor" name="selectSupervisor">
-                <option>-- select supervisor --</option>
-                <option>Mary Moe</option>
-                <option>John Doe</option>
+                {% if supervisors is empty %}
+                    <option>No supervisor records</option>
+                {% else %}
+                    <option>-- select supervisor --</option>
+                    {% for supervisor in supervisors %}
+                    <option value="{{ supervisor.id }}">{{ supervisor.first_name }} {{ supervisor.other_names }} {{ supervisor.last_name }}</option>
+                    {% endfor %}
+                {% endif %}
               </select>
+              {% if errors.has('selectSupervisor')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectSupervisor')}}</small>{% endif %}
             </div>
             
             <button type="submit" class="btn btn-primary">Assign</button>
           </div>
-          <div class="col-sm-2"></div>
+          <div class="col-sm-3"></div>
          
             <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
 
-        </fieldset>
+        </fieldset><br><br>
     </form>
+
+    <fieldset>
+      <legend class="text-center">Unassigned Students and Supervisors</legend>
+                    <div class="col-sm-2"></div>
+
+                    <div class="col-sm-8">
+                      <h3><b>Students</b></h3>
+                      <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered display">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Username</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% if unassignedStudents is empty %}
+                                <tr>
+                                  <td colspan="2"><h4 style="text-align: center; color: gray;">no unassigned student records found in the system!</h4></td>
+                                </tr>
+                              {% else %}
+                              {% for unassignedStudent in unassignedStudents %}
+                                <tr>
+                                    <td>{{ unassignedStudent.first_name }} {{ unassignedStudent.other_names }} {{ unassignedStudent.last_name }}</td>
+                                    <td>{{ unassignedStudent.username }}</td>
+                                </tr>
+                              {% endfor %}
+                              {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-12"></div>
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-8">
+                      <h3><b>Supervisors</b></h3>
+                      <div class="table-responsive">
+                        <table id="myTable1" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Supervisor Name</th>
+                                    <th>Username</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% if unassignedSupervisors is empty %}
+                                <tr>
+                                  <td colspan="2"><h4 style="text-align: center; color: gray;">no unassigned supervisor records found in the system!</h4></td>
+                                </tr>
+                              {% else %}
+                              {% for unassignedSupervisor in unassignedSupervisors %}
+                                <tr>
+                                    <td>{{ unassignedSupervisor.first_name }} {{ unassignedSupervisor.other_names }} {{ unassignedSupervisor.last_name }}</td>
+                                    <td>{{ unassignedSupervisor.username }}</td>
+                                </tr>
+                              {% endfor %}
+                              {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div class="col-sm-2"></div>
+                     
+    </fieldset>
+
     </div>
 
         <div class="col-sm-2 sidenav">

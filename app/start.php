@@ -84,6 +84,9 @@ $app->container->singleton('validation', function() use ($app){
 //add php mailer to container
 $app->container->singleton('mail', function() use($app){
 	$mailer = new PHPMailer;
+
+	
+
 	$mailer->isSMTP();
 
 	$mailer->Host = $app->config->get('mail.host');
@@ -94,6 +97,13 @@ $app->container->singleton('mail', function() use($app){
 	$mailer->Password = $app->config->get('mail.password');
 
 	$mailer->isHTML($app->config->get('mail.html'));
+	$mailer->clearAllRecipients();
+	$mailer->clearAddresses();
+	$mailer->clearAttachments();
+	//$mailer->clearAllRecipients();
+	//$mailer->clearAddresses();
+	//$mailer->clearAttachments();
+
 
 	// Return mailer object
 	return new Mailer($app->view, $mailer);

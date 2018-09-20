@@ -17,7 +17,9 @@ class Student extends Eloquent{
 		'project_start_date',
 		'project_end_date',
 		'project_aims',
-		'final_project_report'
+		'final_project_report',
+		'is_final_project_report_approved',
+		'supervisor_comments'
 	];
 
 	public function projectObjectives(){

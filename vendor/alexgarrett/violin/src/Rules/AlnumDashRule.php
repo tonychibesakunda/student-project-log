@@ -8,7 +8,7 @@ class AlnumDashRule implements RuleContract
 {
     public function run($value, $input, $args)
     {
-        return (bool) preg_match('/^[\pL\pM\pN_-]+$/u', $value);
+        return (bool) preg_match('/^[\pL\pM\pN\s_-]+$/u', $value);
     }
 
     public function error()

@@ -50,6 +50,7 @@
                             {% endfor %}
                         {% endif %}
                       </select>
+                      {% if errors.has('selectSchool')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectSchool')}}</small>{% endif %}
                 </div>
                    
                 <div class="form-group">
@@ -64,6 +65,7 @@
                             {% endfor %}
                         {% endif %}
                       </select>
+                      {% if errors.has('selectDept')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectDept')}}</small>{% endif %}
                 </div>
 
             </div>
@@ -92,14 +94,6 @@
                 </div>
 
             </div>
-
-            <!--<div class="form-group form-inline">
-                <label for="accountStatus">Account status:</label>
-                <select class="form-control" id="accountStatus" style="width: 10%;">
-                    <option>Active</option>
-                    <option>Inactive</option>
-                  </select>
-            </div>-->
             <div class="col-sm-12">
                 <button type="submit" class="btn btn-primary">Add Supervisor</button>
                 <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   

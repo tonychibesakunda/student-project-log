@@ -52,18 +52,18 @@
 <fieldset>
           <legend class="text-center">Add Project Category</legend>
 
-          <div class="col-sm-2"></div>
+          <div class="col-sm-3"></div>
 
-          <div class="col-sm-8">
+          <div class="col-sm-6">
             
             <div class="form-group">
                     <label for="project_category">Project Category</label>
-                    <input type="text" class="form-control" id="project_category" aria-describedby="project_categoryHelp" placeholder="Enter project category" name="project_category"{% if request.post('project_category') %} value="{{request.post('project_category')}}" {% endif %}>
+                    <input type="text" class="form-control" id="project_category" aria-describedby="project_categoryHelp" placeholder="Enter project category" name="project_category"{% if request.post('project_category') %} value="{{request.post('project_category')}}" {% endif %} required>
                     {% if errors.has('project_category')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_category')}}</small>{% endif %}
                 </div>
                 <button type="submit" class="btn btn-primary">Add Category</button>
           </div>
-          <div class="col-sm-2"></div>
+          <div class="col-sm-3"></div>
          
             <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
 

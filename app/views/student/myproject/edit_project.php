@@ -30,16 +30,20 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('student.add_project.post') }}" method="POST" autocomplete="off">
-            
+
+            {% for project in projects %}
+            <form action="{{ urlFor('student.edit_project.post', {id: project.project_id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
             <legend class="text-center">Edit Project</legend>
             <div class="col-sm-6">
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_name">Project Name</label>
-                        <input type="text" class="form-control" id="project_name" aria-describedby="projectNameHelp" placeholder="Enter the title of your project" name="project_name"{% if request.post('project_name') %} value="{{request.post('project_name')}}" {% endif %}>
-                        {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %}
+                        {% for project in projects %}
+                        <input type="text" class="form-control" id="project_name" aria-describedby="projectNameHelp" placeholder="Enter the title of your project" name="project_name" value="{{ request.post('project_name') ? request.post('project_name') : project.project_name }}">
+                        {% endfor %}
+                        {% if errors.has('project_name')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_name')}}</small>{% endif %}
                     </div>
                 </div>
                 <div class="col-sm-12">
@@ -47,16 +51,26 @@
                         <label for="project_category">Project Category</label>
                         <select class="form-control" id="project_category" name="project_category">
                             <option>-- select project category --</option>
-                            <option>Web Application</option>
-                            <option>Data Mining</option>
+                            {% for project in projects %}
+                                {% for pc in project_categories %}
+                                    {% if project.project_cat_id == pc.project_cat_id %}
+                                       <option value="{{ pc.project_cat_id }}" selected>{{ pc.project_category }}</option>
+                                    {% else %}
+                                        <option value="{{ pc.project_cat_id }}">{{ pc.project_category }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}   
                         </select>
+                        {% if errors.has('project_category')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_category')}}</small>{% endif %}
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_description">Project Description</label>
-                        <textarea class="form-control" rows="5" id="project_description" aria-describedby="projectDescriptionHelp" placeholder="Add a brief description about your project" name="project_description"></textarea>
-                        {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
+                        {% for project in projects%}
+                        <textarea class="form-control" rows="5" id="project_description" aria-describedby="projectDescriptionHelp" placeholder="Add a brief description about your project" name="project_description">{{ request.post('project_description') ? request.post('project_description') : project.project_description }}</textarea>
+                        {% endfor %}
+                        {% if errors.has('project_description')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_description')}}</small>{% endif %}
                     </div>
                 </div>
             </div>
@@ -66,15 +80,19 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="project_start_date">Project start date</label>
-                        <input type="date" name="project_start_date" class="form-control" id="project_start_date">
-                        {% if errors.has('password')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password')}}</small>{% endif %}
+                        {% for project in projects%}
+                        <input type="date" name="project_start_date" class="form-control" id="project_start_date" value='{{ request.post("project_start_date") ? request.post("project_start_date") : project.project_start_date|date("Y-m-d") }}'>
+                        {% endfor %}
+                        {% if errors.has('project_start_date')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_start_date')}}</small>{% endif %}
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="project_end_date">Project end date</label>
-                        <input type="date" name="project_end_date" class="form-control" id="project_end_date">
-                        {% if errors.has('password')%}<small class="form-text text-muted" style="color: red;">{{errors.first('password')}}</small>{% endif %}
+                        {% for project in projects%}
+                        <input type="date" name="project_end_date" class="form-control" id="project_end_date" value='{{ request.post("project_end_date") ? request.post("project_end_date") : project.project_end_date|date("Y-m-d") }}'>
+                        {% endfor %}
+                        {% if errors.has('project_end_date')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_end_date')}}</small>{% endif %}
                     </div>
                 </div>
                 <div class="col-sm-12">
@@ -82,27 +100,30 @@
                         <label for="project_type">Project Type</label>
                         <select class="form-control" id="project_type" name="project_type">
                             <option>-- select project type --</option>
-                            <option>Taught</option>
-                            <option>Research</option>
+                            {% for project in projects %}
+                                {% for pt in project_types %}
+                                    {% if project.project_type_id == pt.project_type_id %}
+                                       <option value="{{ pt.project_type_id }}" selected>{{ pt.project_type }}</option>
+                                    {% else %}
+                                        <option value="{{ pt.project_type_id }}">{{ pt.project_type }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
                         </select>
+                        {% if errors.has('project_type')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_type')}}</small>{% endif %}
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label for="project_aim">Project Aim(s)</label>
-                        <textarea class="form-control" rows="5" id="project_aim" aria-describedby="projectDescriptionHelp" placeholder="Add your project aim(s)" name="project_aim"></textarea>
-                        {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
+                        {% for project in projects %}
+                        <textarea class="form-control" rows="5" id="project_aim" aria-describedby="projectDescriptionHelp" placeholder="Add your project aim(s)" name="project_aim">{{ request.post('project_aim') ? request.post('project_aim') : project.project_aims }}</textarea>
+                        {% endfor %}
+                        {% if errors.has('project_aim')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_aim')}}</small>{% endif %}
                     </div>
                 </div>
             </div>
 
-            <!--<div class="form-group form-inline">
-                <label for="accountStatus">Account status:</label>
-                <select class="form-control" id="accountStatus" style="width: 10%;">
-                    <option>Active</option>
-                    <option>Inactive</option>
-                  </select>
-            </div>-->
             <div class="col-sm-6">
                 <div class="col-sm-12">
                     <button type="submit" class="btn btn-primary">Save Changes</button>
