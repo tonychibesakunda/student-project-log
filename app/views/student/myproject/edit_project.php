@@ -18,7 +18,8 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">Project Objectives</div>
                   <div class="panel-body">
-                     <p><a href="{{ urlFor('student.add_project_objective') }}">Add</a></p>  
+                      <p><a href="{{ urlFor('student.add_project_objective') }}">Add</a></p>  
+                     <p><a href="{{ urlFor('student.view_project_objective') }}">View</a></p>    
                   </div>
                 </div>
           </div>
@@ -126,8 +127,8 @@
 
             <div class="col-sm-6">
                 <div class="col-sm-12">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <button type="submit" class="btn btn-link"><a href="{{ urlFor('student.view_project_detail') }}">&larr; Back</a></button>
+                    <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
+                    <button type="button" class="btn btn-link" name="back"><a href="{{ urlFor('student.view_project_detail') }}">&larr; Back</a></button>
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
                 </div>
             </div>

@@ -90,6 +90,8 @@ require INC_ROOT.'/app/routes/student/myproject/existing_project.php';
 require INC_ROOT.'/app/routes/student/myproject/add_on_existing_project.php';
 require INC_ROOT.'/app/routes/student/myproject/view_project_details.php';
 require INC_ROOT.'/app/routes/student/myproject/add_project_objective.php';
+require INC_ROOT.'/app/routes/student/myproject/edit_project_objective.php';
+require INC_ROOT.'/app/routes/student/myproject/view_project_objective.php';
 
 // student/schedules route
 require INC_ROOT.'/app/routes/student/schedules/add_scheduled_meeting.php';

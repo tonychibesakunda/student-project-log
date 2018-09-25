@@ -24,7 +24,7 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('student.add_project.post') }}" method="POST" autocomplete="off">
+            <form action="{{ urlFor('student.add_scheduled_meeting.post') }}" method="POST" autocomplete="off">
             
 <fieldset>
             <legend class="text-center">Add Scheduled Meeting</legend>
@@ -34,13 +34,23 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <div class='input-group date' id='datetimepicker1'>
-                            <input type='date' class="form-control"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+                            <label for="scheduled_date">Scheduled Date:</label>
+                            <input type='date' class="form-control" name="scheduled_date" id="scheduled_date" />
                         </div>
+                        {% if errors.has('scheduled_date')%}<small class="form-text text-muted" style="color: red;">{{errors.first('scheduled_date')}}</small>{% endif %}
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Schedule</button>
+                    <div class="form-group">
+                        <label for="selectSupervisor">Select Supervisor</label>
+                        <select class="form-control" id="selectSupervisor" name="selectSupervisor" style="
+                        width: 283px;">
+                            <option value="0">-- select supervisor --</option>
+                            {% for sp in supervisors %}
+                                <option value="{{ sp.supervisor_id }}">{{ sp.suFName }} {{ sp.suONames }} {{ sp.suLName }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.has('selectSupervisor')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectSupervisor')}}</small>{% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary" name="add">Add Schedule</button>
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
                 </div>
 

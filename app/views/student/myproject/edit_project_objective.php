@@ -1,6 +1,6 @@
 {% extends 'templates/default.php' %}
 
-{% block title %}Add Project Objective{% endblock %}
+{% block title %}Edit Project Objective{% endblock %}
 
 {% block content %}
     <div class="container-fluid text-center">
@@ -32,20 +32,24 @@
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
 
-            
-            <form action="{{ urlFor('student.add_project_objective.post') }}" method="POST" autocomplete="off">
+            {% for po in project_objective %}
+            <form action="{{ urlFor('student.edit_project_objective.post', {id: po.po_id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
-            <legend class="text-center">Add Project Objective</legend>
+            <legend class="text-center">Edit Project Objective</legend>
 
                 <div class="col-sm-3"></div>
 
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="project_objective">Project Objective</label>
-                        <input type="text" class="form-control" id="project_objective" aria-describedby="projectObjectiveHelp" placeholder="Enter project objective" name="project_objective" value="{{ request.post('project_objective') ? request.post('project_objective')}}">
+                        {% for po in project_objective %}
+                        <input type="text" class="form-control" id="project_objective" aria-describedby="projectObjectiveHelp" placeholder="Enter project objective" name="project_objective" value="{{ request.post('project_objective') ? request.post('project_objective') : po.project_objective }}">
+                        {% endfor %}
                         {% if errors.has('project_objective')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_objective')}}</small>{% endif %}
                     </div>
-                    <button type="submit" class="btn btn-primary" name="add">Add Objective</button>
+                    <button type="submit" class="btn btn-primary" name="save">Save</button>
+                    <button type="button" class="btn btn-link" name="back"><a href="{{ urlFor('student.view_project_objective') }}">&larr; Back</a></button>
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
                 </div>
 
@@ -58,7 +62,7 @@
         <div class="col-sm-2 sidenav">
             <div class="well">
                 <label style="font-size: 20px;">Tip <span class="glyphicon glyphicon-info-sign"></span></label>
-                <p>This section is used for adding your project objectives to the system</p>
+                <p>This section is used for editing your project objectives</p>
             </div>
         </div>
 

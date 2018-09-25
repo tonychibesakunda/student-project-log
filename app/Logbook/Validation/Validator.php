@@ -78,6 +78,12 @@ class Validator extends Violin{
 			],
 			'project_aim' => [
 				'required' => 'project aim(s) is required'
+			],
+			'project_objective' => [
+				'required' => 'project objective is required'
+			],
+			'scheduled_date' => [
+				'required' => 'scheduled date is required'
 			]
 		]);
 

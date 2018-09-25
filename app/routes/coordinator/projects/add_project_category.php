@@ -23,13 +23,6 @@ $app->post('/coordinator/projects/add_project_category', $coordinator(), functio
 
 	$v->addRule('uniqueProjectCategory', function($value, $input, $args) {
 
-		//$query = "SELECT project_category FROM project_categories WHERE project_category='$value'";
-		/*$p_c = DB::select(DB::raw($query));
-
-		foreach ($p_c as $pc) {
-			return ! (bool) $pc->project_category->count();
-				
-			}*/
 	    $pc = DB::table('project_categories')
 			    	->select('project_category')
 			    	->where(['project_category' => $value])

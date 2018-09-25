@@ -23,5 +23,5 @@ $app->get('/student/myproject/view_project_details', $student(), function() use(
 })->name('student.view_project_detail');
 
 $app->post('/student/myproject/view_project_details', $student(), function() use($app){
-	echo 'Functionality not yet addded';
+	
 })->name('student.view_project_detail.post');

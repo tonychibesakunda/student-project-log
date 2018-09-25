@@ -18,7 +18,8 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">Project Objectives</div>
                   <div class="panel-body">
-                     <p><a href="{{ urlFor('student.add_project_objective') }}">Add</a></p>  
+                      <p><a href="{{ urlFor('student.add_project_objective') }}">Add</a></p>  
+                     <p><a href="{{ urlFor('student.view_project_objective') }}">View</a></p>  
                   </div>
                 </div>
           </div>
