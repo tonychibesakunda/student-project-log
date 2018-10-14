@@ -16,10 +16,11 @@
 			
             <form class="form-signin" action="{{ urlFor('login.post') }}" method="POST" autocomplete="off">
                 <span id="reauth-email" class="reauth-email"></span>
-                {% if errors.first('username') %}<small style="color: red;">{{ errors.first('username') }}</small>{% endif %}
+                
                 <input type="text" id="username" name="username" class="form-control" placeholder="Username/Computer Number" autofocus>
-                {% if errors.first('password') %}<small style="color: red;">{{ errors.first('password') }}</small>{% endif %}
+                {% if errors.first('username') %}<small style="color: red;">{{ errors.first('username') }}</small>{% endif %}<br>
                 <input type="password" id="password" name="password" class="form-control" placeholder="Password" style="height: 35px;">
+                {% if errors.first('password') %}<small style="color: red;">{{ errors.first('password') }}</small>{% endif %}
                 <div id="remember" class="checkbox">
                     <label>
                         <input type="checkbox" value="remember-me" name="remember" id="remember"> Remember me

@@ -31,7 +31,7 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('student.add_task.post') }}" method="POST" autocomplete="off">
+            
             
         <fieldset>
             <legend class="text-center">View Supervisory Meetings</legend>
@@ -40,25 +40,31 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Duration</th>
+                                <th>Duration (hour(s):mins)</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>12-Aug-2018</td>
-                                <td>2 hours</td>
-                                <td>
-                                  <button type='button' class='btn btn-warning'><a href="{{ urlFor('student.edit_supervisory_meeting') }}" title="Edit Supervisory Meeting"><span class="glyphicon glyphicon-edit"></span></a></button>
-                                    &nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete' title="Remove Supervisory Meeting"><span class="glyphicon glyphicon-trash text-center"></span></button>
-                                </td>
-                            </tr>
+                            {% if supervisory_meetings is empty %}
+                                <tr><td colspan="3"><h4 style="text-align: center; color: gray;">no supervisory meetings have been added to the system yet!</h4></td></tr>
+                            {% else %}
+                            {% for sm in supervisory_meetings %}
+                                <tr>
+                                    <td>{{ sm.scheduled_date|date("d-M-Y") }}</td>
+                                    <td>{{ sm.duration|date("H:i")}}</td>
+                                    <td>
+                                      <button type='button' class='btn btn-warning'><a href="{{ urlFor('student.edit_supervisory_meeting', {id: sm.supervisory_meeting_id}) }}" title="Edit Supervisory Meeting"><span class="glyphicon glyphicon-edit"></span></a></button>
+                                        &nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ sm.supervisory_meeting_id }}' title="Remove Supervisory Meeting"><span class="glyphicon glyphicon-trash text-center"></span></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
-                <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
+                
         </fieldset>
-    </form> 
+    
     </div>
 
         <div class="col-sm-2 sidenav">
@@ -67,7 +73,8 @@
                 <p>This section is used for viewing added supervisory meetings to your project log</p>
             </div>
         </div>
-        <div class="modal fade" id="verifyDelete" role="dialog">
+        {% for sm in supervisory_meetings %}
+        <div class="modal fade" id="verifyDelete{{ sm.supervisory_meeting_id }}" role="dialog">
             <div class="modal-dialog">
                 <!-- Modal Content -->
                 <div class="modal-content">
@@ -79,13 +86,16 @@
                         <p>This record will permanently be deleted / removed from the system. Do you wish to continue?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>&nbsp;
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <form action="{{ urlFor('student.view_supervisory_meetings.post', {id: sm.supervisory_meeting_id}) }}" method="POST" autocomplete="off">
+                            <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
+                            <button type="submit" class="btn btn-primary" value="{id: sm.supervisory_meeting_id}" name="delete">Yes</button>&nbsp;
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </form> 
                     </div>
                 </div>
             </div>
         </div>
-
+        {% endfor %}
     </div>
 </div>
 

@@ -90,11 +90,36 @@ $app->get('/coordinator/projects/assign_supervisors', $coordinator(), function()
             ])
             ->get();
 
+    // get supervisor id
+    $sp_id = "SELECT supervisor_id FROM supervisors";
+    $spID = DB::select(DB::raw($sp_id));
+
+    $idcount=array();
+    foreach ($spID as $sp) {
+        $spId = $sp->supervisor_id;
+
+        // get count of students
+        $stNum = "SELECT count(supervisions.student_id) AS numOfStudents, supervisors.user_id FROM supervisions INNER JOIN supervisors ON supervisions.supervisor_id=supervisors.supervisor_id WHERE supervisions.supervisor_id=$spId";
+        $num_of_students = DB::select(DB::raw($stNum));
+
+        foreach($num_of_students as $val){
+           // $vals=$val->user_id;
+             $idcount[$val->user_id]=$val->numOfStudents;
+
+        }
+       
+    }
+
+
+
 	$app->render('coordinator/projects/assign_supervisors.php', [
 		'students' => $students,
 		'unassignedStudents' => $unassignedStudents,
 		'supervisors' => $supervisors,
-		'unassignedSupervisors' => $unassignedSupervisors
+		'unassignedSupervisors' => $unassignedSupervisors,
+        'num_of_students' => $num_of_students,
+        'spId' => $spID,
+        'val' => $idcount
 	]);
 
 })->name('coordinator.assign_supervisors');
@@ -185,6 +210,26 @@ $app->post('/coordinator/projects/assign_supervisors', $coordinator(), function(
             ])
             ->get();
 
+    // get supervisor id
+    $sp_id = "SELECT supervisor_id FROM supervisors";
+    $spID = DB::select(DB::raw($sp_id));
+
+    $idcount=array();
+    foreach ($spID as $sp) {
+        $spId = $sp->supervisor_id;
+
+        // get count of students
+        $stNum = "SELECT count(supervisions.student_id) AS numOfStudents, supervisors.user_id FROM supervisions INNER JOIN supervisors ON supervisions.supervisor_id=supervisors.supervisor_id WHERE supervisions.supervisor_id=$spId";
+        $num_of_students = DB::select(DB::raw($stNum));
+
+        foreach($num_of_students as $val){
+           // $vals=$val->user_id;
+             $idcount[$val->user_id]=$val->numOfStudents;
+
+        }
+       
+    }
+
 
 	
 	$request = $app->request;
@@ -230,8 +275,16 @@ $app->post('/coordinator/projects/assign_supervisors', $coordinator(), function(
         $query2 = "SELECT * FROM supervisions WHERE student_id=$studentId AND supervisor_id=$supervisorId";
         $sp = DB::select(DB::raw($query2));
 
+        $query3 = "SELECT * FROM supervisions WHERE student_id=$studentId";
+        $stuSp = DB::select(DB::raw($query3));
+
         if(count($sp) > 0){
             $app->flash('error', 'This supervision already exists.');
+            return $app->response->redirect($app->urlFor('coordinator.assign_supervisors'));
+        }
+
+        if(count($stuSp) > 0){
+            $app->flash('error', 'This student has already been assigned a supervisor.');
             return $app->response->redirect($app->urlFor('coordinator.assign_supervisors'));
         }
 
@@ -286,7 +339,9 @@ $app->post('/coordinator/projects/assign_supervisors', $coordinator(), function(
 		'students' => $students,
 		'unassignedStudents' => $unassignedStudents,
 		'supervisors' => $supervisors,
-		'unassignedSupervisors' => $unassignedSupervisors
+		'unassignedSupervisors' => $unassignedSupervisors,
+        'spId' => $spID,
+        'val' => $idcount
 	]);
 
 })->name('coordinator.assign_supervisors.post');

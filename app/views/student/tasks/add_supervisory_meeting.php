@@ -43,15 +43,25 @@
                       <label for="scheduledMeeting">Scheduled Meeting:</label>
 
                       <select class="form-control" id="scheduledMeeting" name="scheduledMeeting">
-                        <option>-- select scheduled meeting --</option>
-                        <option>12-Aug-2018</option>
-                        <option>17-Aug-2018</option>
+                        {% if scheduled_meetings is empty %}
+                          <option>** no scheduled meetings have been added yet **</option>
+                        {% else %}
+                          <option>-- select scheduled meeting --</option>
+                        {% for sm in scheduled_meetings %}
+                          {% if request.post('scheduledMeeting') == sm.scheduled_meeting_id %}
+                            <option  value="{{ sm.scheduled_meeting_id }}" selected>{{ sm.scheduled_date|date("d-M-Y") }}</option>
+                          {% else %}
+                            <option  value="{{ sm.scheduled_meeting_id }}">{{ sm.scheduled_date|date("d-M-Y") }}</option>
+                          {% endif %}
+                        {% endfor %}
+                        {% endif %}
                       </select>
+                      {% if errors.has('scheduledMeeting')%}<small class="form-text text-muted" style="color: red;">{{errors.first('scheduledMeeting')}}</small>{% endif %}
                     </div>
                     <div class="form-group">
-                      <label for="duration">Duration:</label>
-                      <input type="text" class="form-control" id="duration" aria-describedby="durationHelp" placeholder="Enter duration of meeting" name="duration"{% if request.post('project_name') %} value="{{request.post('project_name')}}" {% endif %}>
-                      {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %} 
+                      <label for="duration">Duration (hour(s):mins):</label>
+                      <input type="time" class="form-control" id="duration" aria-describedby="durationHelp" placeholder="Enter duration of meeting" name="duration"{% if request.post('duration') %} value="{{request.post('duration')}}" {% endif %}>
+                      {% if errors.has('duration')%}<small class="form-text text-muted" style="color: red;">{{errors.first('duration')}}</small>{% endif %} 
                     </div>
                     
                     <button type="submit" class="btn btn-primary">Add Supervisory Meeting</button>

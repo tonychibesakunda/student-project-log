@@ -22,6 +22,12 @@
                      <p><a href="{{ urlFor('student.view_project_objective') }}">View</a></p>  
                   </div>
                 </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">Project Report</div>
+                  <div class="panel-body">
+                      <p><a href="{{ urlFor('student.add_project_report') }}">Add</a></p>  
+                  </div>
+                </div>
           </div>
             
         </div>

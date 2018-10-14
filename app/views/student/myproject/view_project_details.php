@@ -22,6 +22,12 @@
                      <p><a href="{{ urlFor('student.view_project_objective') }}">View</a></p>   
                   </div>
                 </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">Project Report</div>
+                  <div class="panel-body">
+                      <p><a href="{{ urlFor('student.add_project_report') }}">Add</a></p>  
+                  </div>
+                </div>
           </div>
             
         </div>
@@ -66,7 +72,7 @@
                     <div class="form-group">
                         <label for="project_description">Project Description:</label>
                         {% for project in projects %}
-                            <p>{{ project.project_description }}</p>
+                            <textarea class="form-control" rows="5" id="project_description" aria-describedby="projectDescriptionHelp" name="project_description" readonly>{{ project.project_description }}</textarea>
                         {% endfor %}
                     </div>
                 </div>
@@ -106,7 +112,7 @@
                     <div class="form-group">
                         <label for="project_aim">Project Aim(s):</label>
                         {% for project in projects %}
-                            <p>{{ project.project_aims }}</p>
+                            <textarea class="form-control" rows="5" id="project_aim" aria-describedby="projectDescriptionHelp" name="project_aim" readonly>{{ project.project_aims }}</textarea>
                         {% endfor %}
                     </div>
                 </div>

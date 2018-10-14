@@ -31,8 +31,10 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('student.edit_supervisory_meeting.post') }}" method="POST" autocomplete="off">
-            
+
+            {% for sm in supervisory_meetings%}
+            <form action="{{ urlFor('student.edit_supervisory_meeting.post', {id: sm.supervisory_meeting_id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
             <legend class="text-center">Edit Supervisory Meeting</legend>
 
@@ -42,20 +44,27 @@
                     <div class="form-group">
                       <label for="scheduledMeeting">Scheduled Meeting:</label>
 
-                      <select class="form-control" id="scheduledMeeting" name="scheduledMeeting">
-                        <option>-- select scheduled meeting --</option>
-                        <option>12-Aug-2018</option>
-                        <option>17-Aug-2018</option>
+                      <select class="form-control" id="scheduledMeeting" name="scheduledMeeting" readonly>
+                        {% for sc in scheduled_meetings %}
+                        {% for sm in supervisory_meetings %}
+                          {% if sc.scheduled_meeting_id == sm.scheduled_meeting_id %}
+                            <option  value="{{ sc.scheduled_meeting_id }}" selected>{{ sc.scheduled_date|date("d-M-Y") }}</option>
+                          {% endif %}
+                        {% endfor %}
+                        {% endfor %}
                       </select>
+                      {% if errors.has('scheduledMeeting')%}<small class="form-text text-muted" style="color: red;">{{errors.first('scheduledMeeting')}}</small>{% endif %}
                     </div>
                     <div class="form-group">
-                      <label for="duration">Duration:</label>
-                      <input type="text" class="form-control" id="duration" aria-describedby="durationHelp" placeholder="Enter duration of meeting" name="duration"{% if request.post('project_name') %} value="{{request.post('project_name')}}" {% endif %}>
-                      {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %} 
+                      <label for="duration">Duration (hour(s):mins):</label>
+                      {% for sm in supervisory_meetings %}
+                      <input type="time" class="form-control" id="duration" aria-describedby="durationHelp" placeholder="Enter duration of meeting" name="duration" value="{{ request.post('duration') ? request.post('duration') : sm.duration|date('H:i') }}" ">
+                      {% endfor %}
+                      {% if errors.has('duration')%}<small class="form-text text-muted" style="color: red;">{{errors.first('duration')}}</small>{% endif %} 
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_supervisory_meetings') }}">&larr; Back</a></button>
+                    <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
+                    <button type='button' class='btn btn-link' name="back"><a href="{{ urlFor('student.view_supervisory_meetings') }}">&larr; Back</a></button>
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
                 </div>
 

@@ -35,15 +35,14 @@
                     <div class="form-group">
                         <div class='input-group date' id='datetimepicker1'>
                             <label for="scheduled_date">Scheduled Date:</label>
-                            <input type='date' class="form-control" name="scheduled_date" id="scheduled_date" />
+                            <input type='date' class="form-control" name="scheduled_date" id="scheduled_date"{% if request.post('scheduled_date') %} value="{{request.post('scheduled_date')}}" {% endif %} />
                         </div>
                         {% if errors.has('scheduled_date')%}<small class="form-text text-muted" style="color: red;">{{errors.first('scheduled_date')}}</small>{% endif %}
                     </div>
                     <div class="form-group">
                         <label for="selectSupervisor">Select Supervisor</label>
                         <select class="form-control" id="selectSupervisor" name="selectSupervisor" style="
-                        width: 283px;">
-                            <option value="0">-- select supervisor --</option>
+                        width: 283px;">  
                             {% for sp in supervisors %}
                                 <option value="{{ sp.supervisor_id }}">{{ sp.suFName }} {{ sp.suONames }} {{ sp.suLName }}</option>
                             {% endfor %}

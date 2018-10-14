@@ -85,6 +85,7 @@ require INC_ROOT.'/app/routes/student/supervisors/view_supervisor_details.php';
 
 // student/myproject route
 require INC_ROOT.'/app/routes/student/myproject/add_project.php';
+require INC_ROOT.'/app/routes/student/myproject/add_project_report.php';
 require INC_ROOT.'/app/routes/student/myproject/edit_project.php';
 require INC_ROOT.'/app/routes/student/myproject/existing_project.php';
 require INC_ROOT.'/app/routes/student/myproject/add_on_existing_project.php';

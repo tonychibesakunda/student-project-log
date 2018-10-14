@@ -59,11 +59,11 @@
             <div class="form-group">
               <label for="selectStudent">Student:</label>
               <select class="form-control" id="selectStudent" name="selectStudent">
-                {% if students is empty %}
-                    <option>No student records</option>
+                {% if unassignedStudents is empty %}
+                    <option>All students have been assigned</option>
                 {% else %}
                     <option>-- select student --</option>
-                    {% for student in students %}
+                    {% for student in unassignedStudents %}
                     <option value="{{ student.id }}">{{ student.first_name }} {{ student.other_names }} {{ student.last_name }}</option>
                     {% endfor %}
                 {% endif %}
@@ -136,19 +136,19 @@
                             <thead>
                                 <tr>
                                     <th>Supervisor Name</th>
-                                    <th>Username</th>
+                                    <th>Number of students</th>
                                 </tr>
                             </thead>
                             <tbody>
-                              {% if unassignedSupervisors is empty %}
+                              {% if supervisors is empty %}
                                 <tr>
                                   <td colspan="2"><h4 style="text-align: center; color: gray;">no unassigned supervisor records found in the system!</h4></td>
                                 </tr>
                               {% else %}
-                              {% for unassignedSupervisor in unassignedSupervisors %}
+                              {% for supervisor in supervisors %}
                                 <tr>
-                                    <td>{{ unassignedSupervisor.first_name }} {{ unassignedSupervisor.other_names }} {{ unassignedSupervisor.last_name }}</td>
-                                    <td>{{ unassignedSupervisor.username }}</td>
+                                    <td>{{ supervisor.first_name }} {{ supervisor.other_names }} {{ supervisor.last_name }}</td>
+                                    <td>{{ val[supervisor.id]  }}</td>
                                 </tr>
                               {% endfor %}
                               {% endif %}

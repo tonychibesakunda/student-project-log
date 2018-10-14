@@ -84,6 +84,18 @@ class Validator extends Violin{
 			],
 			'scheduled_date' => [
 				'required' => 'scheduled date is required'
+			],
+			'scheduledMeeting' => [
+				'int' => 'You need to select a scheduled meeting'
+			],
+			'selectMeeting' => [
+				'int' => 'You need to select a supervisory meeting'
+			],
+			'student_comments' => [
+				'required' => 'Comments are required'
+			],
+			'project_report_file' => [
+				'required' => 'You need to attach a file'
 			]
 		]);
 

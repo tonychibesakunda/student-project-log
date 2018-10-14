@@ -69,7 +69,9 @@ $app->post('/student/myproject/add_project_objective', $student(), function() us
 			DB::table('project_objectives')
 				->insert([
 					'student_id' => $student_id,
-					'project_objective' => $project_objective
+					'project_objective' => $project_objective,
+					'is_completed' => FALSE,
+					'sent_for_approval' => FALSE
 				]);
 			
 			//flash message and redirect

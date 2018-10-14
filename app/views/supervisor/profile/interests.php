@@ -24,14 +24,11 @@
                 <div class="col-sm-3"></div>
 
                 <div class="col-sm-6">
-                    
+                    {% for pc in project_categories %}
                     <div class="checkbox">
-                      <label><input type="checkbox" value="">Web Applications</label>
+                      <label><input type="checkbox" value="{{ pc.project_cat_id }}" name="supervisorInterests[]">{{ pc.project_category }}</label>
                     </div>
-                    <div class="checkbox">
-                      <label><input type="checkbox" value="">Machine Learning</label>
-                    </div>
- 
+                    {% endfor %}
                     <button type="submit" class="btn btn-primary">Add Interests</button>
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
                 </div>

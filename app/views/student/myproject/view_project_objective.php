@@ -22,6 +22,12 @@
                      <p><a href="{{ urlFor('student.view_project_objective') }}">View</a></p> 
                   </div>
                 </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">Project Report</div>
+                  <div class="panel-body">
+                      <p><a href="{{ urlFor('student.add_project_report') }}">Add</a></p>  
+                  </div>
+                </div>
           </div>
             
         </div>
@@ -59,7 +65,7 @@
                                     <input type="hidden" data-target="selectObjective{{ po.po_id }}" value="{{ po.po_id }}">
                                     <td>{{ po.project_objective }}</td>
                                     <td>
-                                        {% if po.sent_for_approval == true%}
+                                        {% if po.sent_for_approval == true %}
                                             <p style="color: orange;">Objective Sent for Approval</p>
                                         {% else %}
                                             <p style="color: red;">Objective Not Yet Sent</p>

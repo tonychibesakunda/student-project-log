@@ -31,8 +31,10 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('student.complete_task.post') }}" method="POST" autocomplete="off">
-            
+
+            {% for ts in tasks %}
+            <form action="{{ urlFor('student.complete_task.post', {id: ts.task_id }) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
             <legend class="text-center">Complete Task</legend>
 
@@ -41,31 +43,47 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                       <label for="task">Project Task:</label>
-                      <input type="text" class="form-control" id="task" aria-describedby="taskHelp" placeholder="Enter project task" name="task"{% if request.post('project_name') %} value="{{request.post('project_name')}}" {% endif %} readonly="true">
-                      {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %} 
+                      {% for ts in tasks %}
+                      <input type="text" class="form-control" id="task" aria-describedby="taskHelp" placeholder="Enter project task" name="task" value="{{ request.post('task') ? request.post('task') : ts.task_description }}" readonly="true">
+                      {% endfor %} 
                     </div>
                     <div class="form-group">
                       <label for="selectMeeting">Supervisory Meeting:</label>
-                      <input type="text" class="form-control" id="task" aria-describedby="taskHelp" placeholder="Enter project task" name="task"{% if request.post('project_name') %} value="12-Aug-2018 (2 hours)" {% endif %} readonly="true">
-                      {% if errors.has('username')%}<small class="form-text text-muted" style="color: red;">{{errors.first('username')}}</small>{% endif %}
+                      <select class="form-control" id="selectMeeting" name="selectMeeting" disabled>
+                        {% for sm in supervisory_meetings %}
+                        {% for ts in tasks %}
+                          {% if sm.supervisory_meeting_id == ts.supervisory_meeting_id %}
+                            <option  value="{{ sm.supervisory_meeting_id }}" selected>{{ sm.scheduled_date|date("d-M-Y") }} < {{ sm.duration|date("H:i") }} hour(s) ></option>
+                          {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                      </select>
                     </div>
                     <div class="form-group">
-                      <label for="file_attachments">Add File(s) (Optional):</label>
+                      <label for="file_attachments">Add File (Optional):</label>
                       <div class="input-group">
                           <label class="input-group-btn">
                               <span class="btn btn-primary">
-                                  Browse&hellip; <input type="file" style="display: none;" multiple id="file_attachments" name="file_attachments">
+                                  {% for ts in tasks %}
+                                  Browse&hellip; <input type="file" style="display: none;" id="file_attachments" name="file_attachments">
+                                  {% endfor %}
                               </span>
                           </label>
-                          <input type="text" class="form-control" readonly>
+                          {% for ts in tasks %}
+                          <input type="text" class="form-control" name="file_name" value="{{ request.post('file_name') ? request.post('file_name') : ts.file_name }}" readonly>
+                          {% endfor %}
                       </div>
+                      {% if errors.has('file_attachments')%}<small class="form-text text-muted" style="color: red;">{{errors.first('file_attachments')}}</small>{% endif %}
                     </div>
                     <div class="form-group">
                       <label for="student_comments">Comments:</label>
-                      <textarea class="form-control" rows="5" id="student_comments" placeholder="Add a comment.."></textarea>
+                      {% for ts in tasks %}
+                      <textarea class="form-control" rows="5" id="student_comments" placeholder="Add a comment.." name="student_comments">{% if request.post('student_comments') %} value="{{request.post('student_comments')}}" {% else %}{{ ts.student_comments }} {% endif %}</textarea>
+                      {% endfor %}
+                      {% if errors.has('student_comments')%}<small class="form-text text-muted" style="color: red;">{{errors.first('student_comments')}}</small>{% endif %}
                     </div>
-                    <button type="submit" class="btn btn-primary">Send for Approval</button>
-                    <button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_tasks') }}">&larr; Back</a></button>
+                    <button type="submit" class="btn btn-primary" name="send">Send for Approval</button>
+                    <button type='button' class='btn btn-link' name="back"><a href="{{ urlFor('student.view_tasks') }}">&larr; Back</a></button> 
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
                 </div>
 

@@ -24,7 +24,10 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('student.add_project.post') }}" method="POST" autocomplete="off">
+
+            {% for sm in scheduled_meeting %}
+            <form action="{{ urlFor('student.edit_scheduled_meeting.post', {id: sm.scheduled_meeting_id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
             
 <fieldset>
             <legend class="text-center">Edit Scheduled Meeting</legend>
@@ -34,15 +37,32 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <div class='input-group date' id='datetimepicker1'>
-                            <input type='date' class="form-control" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+                            <label for="scheduled_date">Scheduled Date:</label>
+                            {% for sm in scheduled_meeting %}
+                            <input type='date' class="form-control" name="scheduled_date" id="scheduled_date" value="{{ request.post('scheduled_date') ? request.post('scheduled_date') : sm.scheduled_date|date('Y-m-d') }}" />
+                            {% endfor %}
                         </div>
+                        {% if errors.has('scheduled_date')%}<small class="form-text text-muted" style="color: red;">{{errors.first('scheduled_date')}}</small>{% endif %}
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <button type="submit" class="btn btn-link"><a href="{{ urlFor('student.view_scheduled_meetings') }}">&larr; Back</a></button>
-                    <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
+                    <div class="form-group">
+                        <label for="selectSupervisor">Select Supervisor</label>
+                        <select class="form-control" id="selectSupervisor" name="selectSupervisor" style="
+                        width: 283px;">  
+                            {% for sp in supervisors %}
+                            {% for sm in scheduled_meeting%}
+                                {% if sp.supervision_id == sm.supervision_id %}
+                                    <option value="{{ sp.supervisor_id }}" selected>{{ sp.suFName }} {{ sp.suONames }} {{ sp.suLName }}</option>
+                                {% else %}
+                                    <option value="{{ sp.supervisor_id }}">{{ sp.suFName }} {{ sp.suONames }} {{ sp.suLName }}</option>
+                                {% endif %}
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                        {% if errors.has('selectSupervisor')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectSupervisor')}}</small>{% endif %}
+                    </div>
+                     <button type="submit" class="btn btn-primary" name="save">Save Changes</button>
+                    <button type="submit" class="btn btn-link" name="back"><a href="{{ urlFor('student.view_scheduled_meetings') }}">&larr; Back</a></button>
+                    <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">  
                 </div>
 
                 <div class="col-sm-3"></div>  

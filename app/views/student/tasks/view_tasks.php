@@ -39,23 +39,61 @@
                     <table id="myTable" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Task</th>
-                                <th>Agreed On</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th style="text-align: center;">Task</th>
+                                <th style="text-align: center;">Agreed On</th>
+                                <th colspan="2">
+                                    <p style="text-align: center;">Task Sent for:</p>
+                                    <p><span style="float: left;">Approval</span>&nbsp; | <span style="float: right;">Completion</span></p>
+                                </th>
+                                <th style="text-align: center;">Approved</th>
+                                <th style="text-align: center;">Completed</th>
+                                <th style="text-align: center;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Develop Database</td>
-                                <td>12-Aug-2018 (2 hours)</td>
-                                <td>Pending</td>
-                                <td>
-                                  <button type='button' class='btn btn-warning'><a href="{{ urlFor('student.edit_task') }}" title="Edit Task"><span class="glyphicon glyphicon-edit"></span></a></button>
-                                        <button type='button' class='btn btn-success'><a href="{{ urlFor('student.complete_task') }}" title="Complete Task"><span class="glyphicon glyphicon-check"></span></a></button>
-                                        &nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete' title="Remove Task"><span class="glyphicon glyphicon-trash text-center"></span></button>
-                                </td>
-                            </tr>
+                            {% if tasks is empty %}
+                                <tr><td colspan="7"><h4 style="text-align: center; color: gray;">no tasks have been added to the system yet!</h4></td></tr>
+                            {% else %}
+                            {% for ts in tasks %}
+                                <tr>
+                                    <td>{{ ts.task_description }}</td>
+                                    <td>{{ ts.scheduled_date|date("d-M-Y") }} < {{ ts.duration|date("H:i") }} hour(s) ></td>
+                                    <td>
+                                        {% if ts.sent_for_approval == true %}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p> 
+                                        {% else %}
+                                            <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ts.sent_for_completion == true %}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                        {% else %}
+                                            <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ts.is_approved == true %}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                        {% else %}
+                                            <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ts.is_completed == true %}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                        {% else %}
+                                            <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button type='button' class='btn btn-warning'><a href="{{ urlFor('student.edit_task', {id: ts.task_id}) }}" title="Edit Task"><span class="glyphicon glyphicon-edit"></span></a></button>
+                                        <button type='button' class='btn btn-success'><a href="{{ urlFor('student.complete_task', {id: ts.task_id}) }}" title="Complete Task"><span class="glyphicon glyphicon-check"></span></a></button>
+                                        <!--&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete' title="Remove Task"><span class="glyphicon glyphicon-trash text-center"></span></button>-->
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
