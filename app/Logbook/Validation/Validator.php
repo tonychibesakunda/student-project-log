@@ -96,6 +96,18 @@ class Validator extends Violin{
 			],
 			'project_report_file' => [
 				'required' => 'You need to attach a file'
+			],
+			'supervisor_interests' => [
+				'required' => 'Supervisor Interests are required',
+				'min' => 'Supervisor Interests must be a minimum of 4 characters'
+			],
+			'student_expectations' => [
+				'required' => 'Student Expectations are required',
+				'min' => 'Student Expectations must be a minimum of 4 characters'
+			],
+			'supervisor_comments' => [
+				'required' => 'Comments are required',
+				'min' => 'Comments must be a minimum of 4 characters'
 			]
 		]);
 

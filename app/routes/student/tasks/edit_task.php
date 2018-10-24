@@ -51,6 +51,8 @@ $app->post('/student/tasks/edit_task/:id', $student(), function($task_id) use($a
 		$user_id = $_SESSION[$app->config->get('auth.session')];
 		$student_id = '';
 		$sp_id = '';
+		$is_approved = '';
+		$is_completed = '';
 
 		//get student id
 		$get_id =  "SELECT student_id FROM students WHERE user_id=$user_id";
@@ -102,27 +104,42 @@ $app->post('/student/tasks/edit_task/:id', $student(), function($task_id) use($a
 				return $app->response->redirect($app->urlFor('student.edit_task',array('id' => $task_id)));
 			}elseif(count($check) == 0){
 
-				//update the projects table
-				Task::where('task_id', '=', $task_id)
-						->update([
-							'supervisory_meeting_id' => $supervisory_meeting,
-							'task_description' => $task
-						]);
+				//check if task has been approved
+				$query3 = "SELECT is_approved, is_completed FROM tasks WHERE task_id=$task_id";
+				$checkApproval = DB::select(DB::raw($query3));
 
-				// send email to supervisor
-				// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
+				foreach($checkApproval as $ca){
+					$is_approved = $ca->is_approved;
+					$is_completed = $ca->is_completed;
+				}
 
-		  //           $studentEmail = '';
-		  //           foreach ($student as $row) {
-		  //               $studentEmail = $row->email;
-		  //           }
-		  //           $message->to($studentEmail);
-		  //           $message->subject('Supervisor Assigned.');
-		  //       });
+				if($is_approved == 1 || $is_completed == 1){
+					//flash message and redirect
+					$app->flash('error', 'Tasks that have been completed or approved cannot be edited');
+					return $app->response->redirect($app->urlFor('student.edit_task',array('id' => $task_id)));
+				}else{
+					//update the tasks table
+					Task::where('task_id', '=', $task_id)
+							->update([
+								'supervisory_meeting_id' => $supervisory_meeting,
+								'task_description' => $task
+							]);
 
-				//flash message and redirect
-				$app->flash('success', 'Task has been successfully updated to your log and has also been sent for approval.');
-				return $app->response->redirect($app->urlFor('student.edit_task',array('id' => $task_id)));			
+					// send email to supervisor
+					// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
+
+			  //           $studentEmail = '';
+			  //           foreach ($student as $row) {
+			  //               $studentEmail = $row->email;
+			  //           }
+			  //           $message->to($studentEmail);
+			  //           $message->subject('Supervisor Assigned.');
+			  //       });
+
+					//flash message and redirect
+					$app->flash('success', 'Task has been successfully updated to your log and has also been sent for approval.');
+					return $app->response->redirect($app->urlFor('student.edit_task',array('id' => $task_id)));
+				}
 
 			}
 

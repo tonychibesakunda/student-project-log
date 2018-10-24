@@ -27,25 +27,41 @@
                     <div class=" col-sm-6">
                         <div class="panel panel-info">
                             <div class="panel-heading">
-                              <h3 class="panel-title">Supervisor Name</h3>
+                                {% for sd in supervisor_details %}
+                                    <h3 class="panel-title"><b>{{ sd.first_name }} {{ sd.other_names }} {{ sd.last_name }}</b></h3>
+                                {% endfor %}
                             </div>
                             <div class="panel-body">
                                 
                                  <div class="table-responsive">
                                   <table class="table table-user-information">
                                     <tbody>
+                                       {% for sd in supervisor_details %} 
                                         <tr>
-                                            <td>Areas of Interest:</td>
-                                            <td>Web Apps, Machine Learning, Deep Learning</td>
+                                            <th>Areas of Interest:</th>
+                                        
+                                            <td>
+                                                {% if sd.interests is empty %}
+                                                    <p style="color: gray;"><b>* Interests not yet added...</b></p>
+                                                {% else %}
+                                                    {{ sd.interests }}
+                                                {% endif %}
+                                            </td>
+                                            
                                         </tr>
                                         <tr>
-                                            <td>Projects Supervised:</td>
-                                            <td>3</td>
+                                            <th>Projects Supervised:</th>
+                                            
+                                            <td>{{ sd.numOfStudents }}</td>
+                                            
                                         </tr>
                                         <tr>
-                                            <td>Students Supervised:</td>
-                                            <td>3</td>
+                                            <th>Students Supervised:</th>
+                                            
+                                            <td>{{ sd.numOfStudents }}</td>
+
                                         </tr>
+                                        {% endfor %}
                                     </tbody>
                                   </table>
                                 </div><!-- end of table responsive -->
@@ -55,8 +71,14 @@
                         </div><!-- end of col-sm-6 div -->
 
                       <div class="col-sm-6">
-                          <h4>Student Expectations:</h4>
-                          <p>Report progress on time, hardworking, innovative</p>
+                          <h4><b>Student Expectations:</b></h4>
+                          {% for sd in supervisor_details %}
+                            {% if sd.student_expectations is empty %}
+                                <p style="color: gray;"><b>* Student Expectations not yet added...</b></p>
+                            {% else %}
+                                <p>{{ sd.student_expectations }}</p>
+                            {% endif %}
+                          {% endfor %}
                       </div>
                             
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
@@ -69,7 +91,7 @@
         <div class="col-sm-2 sidenav">
             <div class="well">
                 <label style="font-size: 20px;">Tip <span class="glyphicon glyphicon-info-sign"></span></label>
-                <p>This section is used for viewing superrvisor details</p>
+                <p>This section is used for viewing supervisor details</p>
             </div>
         </div>
 

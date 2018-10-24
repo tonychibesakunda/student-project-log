@@ -26,17 +26,31 @@
                             <tr>
                                 <th>Scheduled Date</th>
                                 <th>Days Remaining</th>
-                                <th>Status</th>
                                 <th>Student</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>13-Aug-2018</td>
-                                <td>14</td>
-                                <td>Pending</td>
-                                <td>Brian Mhongo</td>
-                            </tr>
+                            {% if supervisions is empty %}
+                                <tr>
+                                    <tr><td colspan="3"><h4 style="text-align: center; color: gray;">no scheduled meetings have been added to the system yet!</h4></td></tr>
+                                </tr>
+                            {% else %}
+                            {% for sp in supervisions %}
+                                <tr>
+                                    <td>{{ sp.scheduled_date|date("d-M-Y")}}</td>
+                                    {% set difference = date(sp.scheduled_date).diff(date(current_date)) %}
+                                    {% set leftDays = difference.days %}
+                                        <th>
+                                            {% if leftDays <= 0 or date(sp.scheduled_date) < date(current_date) %} 
+                                                <p style="color: red;"><b>0</b></p> 
+                                            {% else %}
+                                                <p style="color: green;"><b>{{ leftDays }}</b></p>
+                                            {% endif %}
+                                        </th>
+                                    <td>{{ sp.stFName }} {{ sp.stONames }} {{ sp.stLName }}</td>
+                                </tr>
+                            {% endfor %}
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>

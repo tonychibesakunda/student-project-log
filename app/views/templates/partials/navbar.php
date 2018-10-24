@@ -65,7 +65,9 @@
                         <span class="glyphicon glyphicon-user"></span><span class="caret"></a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ urlFor('user.profile', {username: auth.username}) }}"><span class="glyphicon glyphicon-user"> Profile</span></a></li>
+                            {% if auth.isHod() or auth.isCoordinator() %}
                             <li><a href="{{ urlFor('user.all') }}"><span class="glyphicon glyphicon-cog"> Users</span></a></li>
+                            {% endif %}
                             <li><a href="{{ urlFor('password.change') }}"><span class="glyphicon glyphicon-lock"> Change Password</span></a></li>
 
                             <li role="separator" class="divider"></li>

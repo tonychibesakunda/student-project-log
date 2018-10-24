@@ -120,6 +120,8 @@ require INC_ROOT.'/app/routes/supervisor/profile/student_expectations.php';
 // supervisor/projects route
 require INC_ROOT.'/app/routes/supervisor/projects/student_projects.php';
 require INC_ROOT.'/app/routes/supervisor/projects/student_project_details.php';
+require INC_ROOT.'/app/routes/supervisor/projects/project_objective_comments.php';
+require INC_ROOT.'/app/routes/supervisor/projects/project_report_comments.php';
 
 // supervisor/schedules route
 require INC_ROOT.'/app/routes/supervisor/schedules/scheduled_meetings.php';

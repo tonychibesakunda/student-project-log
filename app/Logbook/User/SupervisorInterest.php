@@ -12,7 +12,7 @@ class SupervisorInterest extends Eloquent{
 
 	protected $fillable = [
 		'supervisor_id',
-		'project_cat_id'
+		'interests'
 	];
 
 

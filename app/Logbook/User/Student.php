@@ -17,7 +17,9 @@ class Student extends Eloquent{
 		'project_start_date',
 		'project_end_date',
 		'project_aims',
-		'final_project_report',
+		'final_project_report_file_path',
+		'final_project_report_file_name',
+		'final_project_report_new_file_name',
 		'is_final_project_report_approved',
 		'supervisor_comments'
 	];

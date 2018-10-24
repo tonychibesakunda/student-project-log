@@ -26,9 +26,15 @@
                 <div class="col-sm-6">
                     
                     <div class="form-group">
-                        <label for="student_expectations">Student Expectations</label>
-                        <textarea class="form-control" rows="5" id="student_expectations" aria-describedby="projectDescriptionHelp" placeholder="Add a brief description about what you expect from a student. Example: Student should report on time" name="student_expectations"></textarea>
-                        {% if errors.has('email')%}<small class="form-text text-muted" style="color: red;">{{errors.first('email')}}</small>{% endif %}
+                        <label for="student_expectations">Student Expectations:</label>
+                        {% for se in student_expectations %}
+                        {% if se.student_expectations is empty %}
+                            <textarea class="form-control" rows="5" id="student_expectations" name="student_expectations" placeholder="Example: Report on time, keeps me up to date, etc">{% if request.post('student_expectations') %}{{request.post('student_expectations')}} {% endif %}</textarea>
+                        {% else %}
+                            <textarea class="form-control" rows="5" id="student_expectations" name="student_expectations" placeholder="Example: Report on time, keeps me up to date, etc">{% if request.post('student_expectations') %}{{request.post('student_expectations')}} {% else %}{{ se.student_expectations }} {% endif %}</textarea>
+                        {% endif %}
+                        {% endfor %}
+                        {% if errors.has('student_expectations')%}<small class="form-text text-muted" style="color: red;">{{errors.first('student_expectations')}}</small>{% endif %}
                     </div>
  
                     <button type="submit" class="btn btn-primary">Add Expectation</button>
@@ -38,28 +44,6 @@
                 <div class="col-sm-3"></div>  
         </fieldset><br><br><br><br>
     </form>
-
-    <fieldset>
-        <legend style="text-align: center;">Added Expecation</legend>
-        <div class="table-responsive">
-                        <table id="myTable" class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Expecations</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Report on time</td>
-                                    <td>
-                                        <button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete' title="Remove Interest"><span class="glyphicon glyphicon-trash text-center"></span></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>    
-    </fieldset>
 
     </div>
 

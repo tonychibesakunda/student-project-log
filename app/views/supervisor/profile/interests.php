@@ -19,16 +19,22 @@
             <form action="{{ urlFor('supervisor.interests.post') }}" method="POST" autocomplete="off">
             
 <fieldset>
-            <legend class="text-center">Choose Areas of Interest</legend>
+            <legend class="text-center">Add Areas of Interest</legend>
 
                 <div class="col-sm-3"></div>
 
                 <div class="col-sm-6">
-                    {% for pc in project_categories %}
-                    <div class="checkbox">
-                      <label><input type="checkbox" value="{{ pc.project_cat_id }}" name="supervisorInterests[]">{{ pc.project_category }}</label>
+                    <div class="form-group">
+                      <label for="supervisor_interests">Interests:</label>
+                      {% if supervisor_interests is empty %}
+                        <textarea class="form-control" rows="5" id="supervisor_interests" name="supervisor_interests" placeholder="Example: Machine Learning, Artificial Intelligence, Web Applications, etc">{% if request.post('supervisor_interests') %}{{request.post('supervisor_interests')}} {% endif %}</textarea>
+                      {% else %}
+                      {% for si in supervisor_interests %}
+                        <textarea class="form-control" rows="5" id="supervisor_interests" name="supervisor_interests" placeholder="Example: Machine Learning, Artificial Intelligence, Web Applications, etc">{% if request.post('supervisor_interests') %}{{request.post('supervisor_interests')}} {% else %}{{ si.interests }} {% endif %}</textarea>
+                      {% endfor %}
+                      {% endif %}
+                      {% if errors.has('supervisor_interests')%}<small class="form-text text-muted" style="color: red;">{{errors.first('supervisor_interests')}}</small>{% endif %}
                     </div>
-                    {% endfor %}
                     <button type="submit" class="btn btn-primary">Add Interests</button>
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
                 </div>
@@ -36,34 +42,6 @@
                 <div class="col-sm-3"></div>  
         </fieldset><br><br><br><br>
     </form>
-
-    <fieldset>
-        <legend style="text-align: center;">Added Interests</legend>
-        <div class="table-responsive">
-                        <table id="myTable" class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Interests</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Web Applications</td>
-                                    <td>
-                                        <button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete' title="Remove Interest"><span class="glyphicon glyphicon-trash text-center"></span></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Machine Learning</td>
-                                    <td>
-                                        <button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete' title="Remove Interest"><span class="glyphicon glyphicon-trash text-center"></span></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>    
-    </fieldset>
 
     </div>
 

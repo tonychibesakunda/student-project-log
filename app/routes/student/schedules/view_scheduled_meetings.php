@@ -49,24 +49,36 @@ $app->post('/student/schedules/view_scheduled_meetings/:id', $student(), functio
 	// when the confirm delete (yes) button is clicked
 	if(isset($_POST['delete'])){
 
-		//delete records
-    	ScheduledMeeting::where('scheduled_meeting_id', $sm_id)->delete();
+		//check if date has been used in a task
+		$query = "SELECT * FROM supervisory_meetings WHERE scheduled_meeting_id=$sm_id";
+		$checkM = DB::select(DB::raw($query));
 
-    	// Send email to supervisor
-        /*$app->mail->send('email/scheduled_meeting/scheduled_meeting.php', ['student' => $student, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
+		if(count($checkM) > 0){
+			//flash message
+			$app->flash('error', "Scheduled Dates that have been used in tasks cannot be removed");
+	    	return $app->response->redirect($app->urlFor('student.view_scheduled_meetings'));
+		}elseif(count($checkM) == 0){
+			//delete records
+	    	ScheduledMeeting::where('scheduled_meeting_id', $sm_id)->delete();
 
-            $supervisor_email = '';
-            //get supervisor email
-			foreach ($supervisors as $sup) {
-					$supervisor_email = $sup->suEmail;
-				}
-            $message->to($supervisor_email);
-            $message->subject('Scheduled Date Added.');
-        });*/
+	    	// Send email to supervisor
+	        /*$app->mail->send('email/scheduled_meeting/scheduled_meeting.php', ['student' => $student, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
 
-    	//flash message
-		$app->flash('success', "Scheduled Date has been successfully removed");
-    	return $app->response->redirect($app->urlFor('student.view_scheduled_meetings'));
+	            $supervisor_email = '';
+	            //get supervisor email
+				foreach ($supervisors as $sup) {
+						$supervisor_email = $sup->suEmail;
+					}
+	            $message->to($supervisor_email);
+	            $message->subject('Scheduled Date Added.');
+	        });*/
+
+	    	//flash message
+			$app->flash('success', "Scheduled Date has been successfully removed");
+	    	return $app->response->redirect($app->urlFor('student.view_scheduled_meetings'));
+		}
+
+		
 	}
 	
 })->name('student.view_scheduled_meetings.post');

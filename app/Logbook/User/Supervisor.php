@@ -11,7 +11,8 @@ class Supervisor extends Eloquent{
 	protected $table = 'supervisors';
 
 	protected $fillable = [
-		'user_id'
+		'user_id',
+		'student_expectations'
 	];
 
 	public function supervisorInterests(){

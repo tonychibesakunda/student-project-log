@@ -17,7 +17,9 @@ class Task extends Eloquent{
 		'sent_for_completion',
 		'is_approved',
 		'is_completed',
-		'file_attachments',
+		'file_path',
+		'file_name',
+		'new_file_name',
 		'student_comments',
 		'supervisor_approval_comments',
 		'supervisor_completion_comments'

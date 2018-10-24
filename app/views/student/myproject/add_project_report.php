@@ -37,7 +37,7 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('student.add_project_report.post') }}" method="POST" autocomplete="off">
+            <form action="{{ urlFor('student.add_project_report.post') }}" method="POST" autocomplete="off" enctype="multipart/form-data">
             
                 <fieldset>
                     <legend class="text-center">Add Project Report</legend>
@@ -61,11 +61,55 @@
                           {% if errors.has('project_report_file')%}<small class="form-text text-muted" style="color: red;">{{errors.first('project_report_file')}}</small>{% endif %}
                         </div>
                         
-                        <button type="submit" class="btn btn-primary">Add Report</button> 
+                        <button type="submit" class="btn btn-primary" name="add">Add Report</button><br><br> 
                         <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
                     </div>
 
                     <div class="col-sm-3"></div>
+
+                    <div class="col-sm-12">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-10">
+                        <div class="table-responsive">
+                          <table id="" class="table table-bordered">
+                              <thead>
+                                  <tr>
+                                      <th>Project Report</th>
+                                      <th>Approved</th>
+                                      <th>Supervisor Comments</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                {% for pr in project_report %}
+                                {% if pr.final_project_report_file_name is empty %}
+                                  <td colspan="3"><h4 style="text-align: center; color: gray;">you have not added your project report!</h4></td>
+                                {% else %}
+                                  <tr>
+                                      <td>{{ pr.final_project_report_file_name }}</td>
+                                      <td>
+                                          {% if pr.is_final_project_report_approved is empty %}
+                                              <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                          {% else %}
+                                              <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                          {% endif %}
+                                      </td>
+                                      <td>
+                                        {% if pr.supervisor_comments is empty %}
+                                          <p style="color: gray;"><b>* no supervisor comments...</b></p>
+                                        {% else %}
+                                          <p>{{ pr.supervisor_comments }}</p>
+                                        {% endif %}
+                                      </td>
+                                  </tr>
+                                  {% endif %}
+                                 {% endfor %} 
+                              </tbody>
+                          </table>
+                      
+                        </div>
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
                 </fieldset>
             </form>
         </div>

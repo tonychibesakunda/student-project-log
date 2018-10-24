@@ -30,14 +30,32 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Cache Simulation</td>
-                                    <td>Brian Mhongo</td>
-                                    <td>In Progress..</td>
-                                    <td>
-                                        <button type='button' class='btn btn-link'><a href="{{ urlFor('supervisor.student_project_details') }}">More Details..</a></button>
-                                    </td>
-                                </tr>
+                                {% if student_projects is empty %}
+                                    <tr><td colspan="4"><h4 style="text-align: center; color: gray;">student projects have not yet been added to the system!</h4></td></tr>
+                                {% else %}
+                                {% for sp in student_projects %}
+                                    <tr>
+                                        <td>
+                                            {% if sp.project_name is empty%}
+                                                <h4 style="text-align: center; color: gray;">project has not been added yet</h4>
+                                            {% else %}
+                                                {{ sp.project_name }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ sp.first_name }} {{ sp.other_names }} {{ sp.last_name }}</td>
+                                        <td>
+                                            {% if sp.is_final_project_report_approved == 1 %}
+                                                <p style="color: green;"><b>Project is completed</b></p>
+                                            {% else %}
+                                                <p style="color: orange;"><b>Project in progress...</b></p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button type='button' class='btn btn-link'><a href="{{ urlFor('supervisor.student_project_details', {id: sp.supervision_id}) }}">More Details..</a></button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>

@@ -33,7 +33,7 @@
             {% include 'templates/partials/warning_messages.php' %}
 
             {% for ts in tasks %}
-            <form action="{{ urlFor('student.complete_task.post', {id: ts.task_id }) }}" method="POST" autocomplete="off">
+            <form action="{{ urlFor('student.complete_task.post', {id: ts.task_id }) }}" method="POST" autocomplete="off" enctype="multipart/form-data">
             {% endfor %}
 <fieldset>
             <legend class="text-center">Complete Task</legend>
@@ -60,7 +60,7 @@
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="file_attachments">Add File (Optional):</label>
+                      <label for="file_attachments">Add File:</label>
                       <div class="input-group">
                           <label class="input-group-btn">
                               <span class="btn btn-primary">
@@ -81,6 +81,16 @@
                       <textarea class="form-control" rows="5" id="student_comments" placeholder="Add a comment.." name="student_comments">{% if request.post('student_comments') %} value="{{request.post('student_comments')}}" {% else %}{{ ts.student_comments }} {% endif %}</textarea>
                       {% endfor %}
                       {% if errors.has('student_comments')%}<small class="form-text text-muted" style="color: red;">{{errors.first('student_comments')}}</small>{% endif %}
+                    </div>
+                    <div class="form-group">
+                      <label for="supervisor_approval_comments">Supervisor Comments:</label>
+                      {% for ts in tasks %}
+                        {% if ts.supervisor_completion_comments is empty %}
+                          <p style="color: grey;">No Comments from your supervisor </p>
+                        {% else %}
+                          <textarea class="form-control" rows="5" id="supervisor_approval_comments" aria-describedby="projectDescriptionHelp" name="supervisor_approval_comments" readonly>{{ ts.supervisor_completion_comments }}</textarea>
+                        {% endif %}
+                      {% endfor %} 
                     </div>
                     <button type="submit" class="btn btn-primary" name="send">Send for Approval</button>
                     <button type='button' class='btn btn-link' name="back"><a href="{{ urlFor('student.view_tasks') }}">&larr; Back</a></button> 

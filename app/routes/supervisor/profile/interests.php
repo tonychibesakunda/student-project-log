@@ -1,5 +1,7 @@
 <?php
 
+use Logbook\User\SupervisorInterest;
+
 use Illuminate\Database\Capsule\Manager as DB;
 
 $app->get('/supervisor/profile/interests', $supervisor(), function() use($app){
@@ -16,12 +18,12 @@ $app->get('/supervisor/profile/interests', $supervisor(), function() use($app){
 		$supervisor_id = $row->supervisor_id;
 	}
 
-	//get project categories 
-	$query = "SELECT project_cat_id, project_category FROM project_categories";
-	$project_categories = DB::select(DB::raw($query));
+	//get supervisor interests 
+	$query = "SELECT * FROM supervisor_interests WHERE supervisor_id=$supervisor_id";
+	$supervisor_interests = DB::select(DB::raw($query));
 
 	$app->render('supervisor/profile/interests.php',[
-		'project_categories' => $project_categories
+		'supervisor_interests' => $supervisor_interests
 	]);
 
 })->name('supervisor.interests');
@@ -40,82 +42,78 @@ $app->post('/supervisor/profile/interests', $supervisor(), function() use($app){
 		$supervisor_id = $row->supervisor_id;
 	}
 
-	//get project categories 
-	$query = "SELECT project_cat_id, project_category FROM project_categories";
-	$project_categories = DB::select(DB::raw($query));
+	//get supervisor interests 
+	$query = "SELECT * FROM supervisor_interests WHERE supervisor_id=$supervisor_id";
+	$supervisor_interests = DB::select(DB::raw($query));
 
 	$request = $app->request;
 
 	//get user input
-	$supervisorInterests = $request->post('supervisorInterests');
+	$supervisorInterests = $request->post('supervisor_interests');
 
 	//validate user input
 	$v = $app->validation;
 
-	if(is_null($supervisorInterests)){
-		//flash message and redirect
-		$app->flash('error', 'You need to select an interest');
-		return $app->response->redirect($app->urlFor('supervisor.interests'));
-	}else{
+	$v->addRuleMessage('uniqueInterests', 'This set of interests has already been added.');
 
-		for($x = min($supervisorInterests); $x <= sizeof($supervisorInterests); $x++){
+	$v->addRule('uniqueInterests', function($value, $input, $args) use($app){
 
-				//check if interest already exists
-				$query2 = "SELECT * FROM supervisor_interests WHERE supervisor_id=$supervisor_id AND project_cat_id=$x";
-				$checkSI = DB::select(DB::raw($query2));
+		//supervisor details
+		$user_id = $_SESSION[$app->config->get('auth.session')];
+		$supervisor_id = '';
 
-				if(count($checkSI) > 0){
-					//flash message and redirect
-					$app->flash('error', 'Some interests have already been added');
-					return $app->response->redirect($app->urlFor('supervisor.interests'));
-				}elseif(count($checkSI) == 0){
+		//get supervisor id
+		$get_id =  "SELECT supervisor_id FROM supervisors WHERE user_id=$user_id";
+		$sid = DB::select(DB::raw($get_id));
 
-					//insert records into table
-					DB::table('supervisor_interests')
-						->insert([
-							'supervisor_id' => $supervisor_id,
-							'project_cat_id' => $x
+		foreach ($sid as $row) {
+			$supervisor_id = $row->supervisor_id;
+		}
+
+	    $si = DB::table('supervisor_interests')
+			    	->select('interests')
+			    	->where([
+			    		'supervisor_id' => $supervisor_id,
+			    		'interests' => $value
+			    	])
+			    	->first();
+
+		
+	    return ! (bool) $si;
+	});
+
+	$v->validate([
+		'supervisor_interests' => [$supervisorInterests, 'required|min(4)|uniqueInterests']
+	]);
+
+	if($v->passes()){
+
+		//if record exists in database
+		if(count($supervisor_interests) == 0){
+
+			//insert record into supervisor_interests table
+			DB::table('supervisor_interests')
+				->insert([
+					'supervisor_id' => $supervisor_id,
+					'interests' => $supervisorInterests
+				]);
+
+			//flash message and redirect
+			$app->flash('success', 'Your interests having been added to the system');
+			return $app->response->redirect($app->urlFor('supervisor.interests'));
+		}elseif(count($supervisor_interests) > 0){
+
+			//update record into supervisor_interests table
+			SupervisorInterest::where('supervisor_id', '=', $supervisor_id)
+						->update([
+							'interests' => $supervisorInterests
 						]);
-					//flash message and redirect
-					$app->flash('success', 'Your interests have been successfully added');
-					return $app->response->redirect($app->urlFor('supervisor.interests'));
-				}
 
-			}
+			//flash message and redirect
+			$app->flash('success', 'Your interests have been updated successfully');
+			return $app->response->redirect($app->urlFor('supervisor.interests'));
+		}
 
-		//get user input
-		/*foreach ($supervisorInterests as $value) {
-
-			$values = array($value);
-
-			/*for($x = min($value); $x <= sizeof($value); $x++){
-
-				//check if interest already exists
-				$query2 = "SELECT * FROM supervisor_interests WHERE supervisor_id=$supervisor_id AND project_cat_id=$x";
-				$checkSI = DB::select(DB::raw($query2));
-
-				if(count($checkSI) > 0){
-					//flash message and redirect
-					$app->flash('error', 'Some interests have already been added');
-					return $app->response->redirect($app->urlFor('supervisor.interests'));
-				}elseif(count($checkSI) == 0){
-
-					//insert records into table
-					DB::table('supervisor_interests')
-						->insert([
-							'supervisor_id' => $supervisor_id,
-							'project_cat_id' => $x
-						]);
-					//flash message and redirect
-					$app->flash('success', 'Your interests have been successfully added');
-					return $app->response->redirect($app->urlFor('supervisor.interests'));
-				}
-
-			}
-			
-			// print_r($values);
-		}*/
-		//print_r(min($supervisorInterests));
 
 	}
 
@@ -124,7 +122,7 @@ $app->post('/supervisor/profile/interests', $supervisor(), function() use($app){
 	$app->render('supervisor/profile/interests.php',[
 		'errors' => $v->errors(),
 		'request' => $request,
-		'project_categories' => $project_categories
+		'supervisor_interests' => $supervisor_interests
 	]);
 
 })->name('supervisor.interests.post');

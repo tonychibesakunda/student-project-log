@@ -32,11 +32,23 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% if supervisors is empty %}
+                                    <tr><td colspan="3"><h4 style="text-align: center; color: gray;">no supervisor details have been added to the system yet!</h4></td></tr>
+                                {% else %}
+                                {% for sp in supervisors %}
                                 <tr>
-                                    <td>Mrs Monica Kabemba</td>
-                                    <td>Web Apps, Machine Leraning,</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_supervisor_details') }}">More Details..</a></button>
+                                    <td>{{ sp.first_name }} {{ sp.other_names }} {{ sp.last_name }}</td>
+                                    <td style="width: 500px;">
+                                        {% if sp.interests is empty %}
+                                            <h4 style="text-align: center; color: gray;">supervisor has not added their interests yet</h4>
+                                        {% else %}
+                                            {{ sp.interests }}
+                                        {% endif %}
+                                    </td>
+                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_supervisor_details', {id: sp.supervisor_id}) }}">More Details..</a></button>
                                 </tr>
+                                {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>

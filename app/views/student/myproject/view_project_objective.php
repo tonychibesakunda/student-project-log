@@ -43,15 +43,16 @@
             {% endfor %}   
                 <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
     <fieldset>
-        <legend style="text-align: center;">Added Project Objectives</legend> {{ id }}
+        <legend style="text-align: center;">Added Project Objectives</legend>
         <div class="table-responsive">
                         <table id="myTable" class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Project Objective</th>
-                                    <th>Request Approval</th>
-                                    <th>Objective Status</th>
-                                    <th>Actions</th>
+                                    <th style="width: 20%;">Project Objective</th>
+                                    <th style="width: 20%;">Request Approval</th>
+                                    <th style="width: 20%;">Objective Status</th>
+                                    <th style="width: 20%;">Supervisor Comments</th>
+                                    <th style="width: 20%;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,9 +74,16 @@
                                     </td>
                                     <td>
                                         {% if po.is_completed == true%}
-                                            <p style="color: green;">Approved and Completed</p>
+                                            <p style="color: green;">Approved / Completed</p>
                                         {% else %}
                                             <p style="color: red;">Incomplete</p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if po.supervisor_comments is empty %}
+                                            <p style="color: grey;"><b>* Comments not added...</b></p>
+                                        {% else %}
+                                            <p>{{ po.supervisor_comments }}</p>
                                         {% endif %}
                                     </td>
                                     <td>

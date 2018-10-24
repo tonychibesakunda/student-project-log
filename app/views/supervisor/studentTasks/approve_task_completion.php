@@ -15,8 +15,10 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('supervisor.confirm_task.post') }}" method="POST" autocomplete="off">
-            
+
+            {% for ts in tasks %}
+            <form action="{{ urlFor('supervisor.approve_task_completion.post',{id: ts.task_id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
             <legend class="text-center">Approve Student Task Completion</legend>
 
@@ -26,33 +28,51 @@
 
                <div class="col-sm-6">
                     <div class="form-group">
-                      <label for="student_name">Student Name:</label>
-                      <p>Name of Student</p>
+                        <label for="student_name">Student Name:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.stFName }} {{ ts.stONames }} {{ ts.stLName }}</p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
-                      <label for="project_name">Project Name:</label>
-                      <p>Name of Project</p>
+                        <label for="project_name">Project Name:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.project_name }}</p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
-                      <label for="task">Project Task:</label>
-                      <p>Develop Database</p>
+                        <label for="task">Project Task:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.task_description }}</p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
-                      <label for="selectMeeting">Supervisory Meeting:</label>
-                      <p>12-Aug-2018 (2 hours)</p>
+                        <label for="selectMeeting">Supervisory Meeting:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.scheduled_date|date("d-M-Y") }} < {{ ts.duration|date("H:i") }} hour(s) ></p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
                       <label for="attached_file">Attached Files:</label>
                       <div>
-                          <a href="#"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i> Journal artcle. (155.5Kb)</a>
+                        {% for ts in tasks %}
+                        {% if ts.file_path is empty %}
+                          <p style="color: gray;"><b>* file not added</b></p>
+                        {% else %}
+                          <a href="/sprl_slim/uploads/tasks/{{ ts.new_file_name }}" download="{{ ts.file_name }}"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i>{{ ts.file_name }}</a>
+                        {% endif %}
+                        {% endfor %}
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="student_comments">Student Comments:</label>
-                      <p>Student Comments will be added here</p>
+                        <label for="student_comments">Student Comments:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.student_comments }}</p>
+                        {% endfor %}
                     </div>
-                    <button type="submit" class="btn btn-primary">Approve Task</button>
-                    <button type='button' class='btn btn-link'><a href="{{ urlFor('supervisor.review_task_completion') }}">Review Task</a></button>
+                    <button type="submit" class="btn btn-primary" name="approve_task">Approve Task</button>
+                    {% for ts in tasks %}
+                    <button type='button' class='btn btn-link'><a href="{{ urlFor('supervisor.review_task_completion', {id: ts.task_id}) }}">Review Task</a></button>
+                    {% endfor %}
                 </div>
                 
 

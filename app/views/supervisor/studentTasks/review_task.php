@@ -15,37 +15,56 @@
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
             {% include 'templates/partials/warning_messages.php' %}
-            <form action="{{ urlFor('supervisor.confirm_task.post') }}" method="POST" autocomplete="off">
-            
+
+            {% for ts in tasks %}
+            <form action="{{ urlFor('supervisor.review_task.post', {id: ts.task_id}) }}" method="POST" autocomplete="off">
+            {% endfor %}
 <fieldset>
             <legend class="text-center">Review Student Task</legend>
 
                 <div class="col-sm-3">
-                    <button type='button' class='btn btn-link'><a href="{{ urlFor('supervisor.confirm_task') }}">&larr; Back</a></button>
+                  {% for ts in tasks %}
+                    <button type='button' class='btn btn-link'><a href="{{ urlFor('supervisor.confirm_task', {id:ts.task_id}) }}">&larr; Back</a></button>
+                  {% endfor %}
                 </div>
 
                <div class="col-sm-6">
                     <div class="form-group">
-                      <label for="task">Student Name:</label>
-                      <p>Name of Student</p>
+                        <label for="task">Student Name:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.stFName }} {{ ts.stONames }} {{ ts.stLName }}</p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
-                      <label for="task">Project Name:</label>
-                      <p>Name of Project</p>
+                        <label for="task">Project Name:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.project_name }}</p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
-                      <label for="task">Project Task:</label>
-                      <p>Develop Database</p>
+                        <label for="task">Project Task:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.task_description }}</p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
-                      <label for="selectMeeting">Supervisory Meeting:</label>
-                      <p>12-Aug-2018 (2 hours)</p>
+                        <label for="selectMeeting">Supervisory Meeting:</label>
+                        {% for ts in tasks %}
+                          <p>{{ ts.scheduled_date|date("d-M-Y") }} < {{ ts.duration|date("H:i") }} hour(s) ></p>
+                        {% endfor %}
                     </div>
                     <div class="form-group">
-                      <label for="student_comments">Suggestions / Comments:</label>
-                      <textarea class="form-control" rows="5" id="student_comments" placeholder="Add a comment.."></textarea>
+                        <label for="supervisor_comments">Suggestions / Comments:</label>
+                        {% for ts in tasks %}
+                        {% if ts.supervisor_approval_comments is empty %}
+                            <textarea class="form-control" rows="5" id="supervisor_comments" name="supervisor_comments" placeholder="Add comments">{% if request.post('supervisor_comments') %}{{request.post('supervisor_comments')}} {% endif %}</textarea>
+                        {% else %}
+                            <textarea class="form-control" rows="5" id="supervisor_comments" name="supervisor_comments" placeholder="Add comments">{% if request.post('supervisor_comments') %}{{request.post('supervisor_comments')}} {% else %}{{ ts.supervisor_approval_comments }} {% endif %}</textarea>
+                        {% endif %}
+                        {% endfor %}
+                        {% if errors.has('supervisor_comments')%}<small class="form-text text-muted" style="color: red;">{{errors.first('supervisor_comments')}}</small>{% endif %}
                     </div>
-                    <button type="submit" class="btn btn-primary">Send Review</button>
+                    <button type="submit" class="btn btn-primary" name="send_review">Send Review</button>
                 </div>
                 
 

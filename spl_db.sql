@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 14, 2018 at 07:10 PM
+-- Generation Time: Oct 24, 2018 at 11:38 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -141,10 +141,11 @@ CREATE TABLE `project_objectives` (
 --
 
 INSERT INTO `project_objectives` (`po_id`, `student_id`, `project_objective`, `is_completed`, `sent_for_approval`, `supervisor_comments`, `created_at`, `updated_at`) VALUES
-(5, 9, 'Develop requirements and specifications', 0, 1, NULL, NULL, '2018-09-25 08:20:13'),
-(9, 9, 'Deploy System', 0, 1, NULL, NULL, '2018-09-26 07:45:15'),
-(10, 9, 'Test the System', 0, 1, NULL, NULL, '2018-10-14 12:02:10'),
-(11, 9, 'Complete Methodology', 0, 0, NULL, NULL, NULL);
+(5, 9, 'Develop requirements and specifications', 1, 1, NULL, NULL, '2018-10-24 08:29:08'),
+(9, 9, 'Deploy System', 1, 1, NULL, NULL, '2018-10-23 08:00:20'),
+(10, 9, 'Test the System', 1, 1, NULL, NULL, '2018-10-24 08:29:13'),
+(12, 9, 'New Objective', 0, 0, 'What is this? Please remove it', NULL, '2018-10-20 23:24:49'),
+(13, 9, 'Complete Methodology', 0, 0, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -190,8 +191,9 @@ INSERT INTO `scheduled_meetings` (`scheduled_meeting_id`, `supervision_id`, `sch
 (15, 64, '2018-10-12 00:00:00', NULL, NULL),
 (16, 64, '2018-10-22 00:00:00', NULL, NULL),
 (18, 64, '2018-10-07 00:00:00', NULL, NULL),
-(19, 64, '2018-10-09 00:00:00', NULL, NULL),
-(20, 64, '2018-10-08 00:00:00', NULL, NULL);
+(20, 64, '2018-10-08 00:00:00', NULL, NULL),
+(21, 65, '2018-10-25 00:00:00', NULL, NULL),
+(22, 65, '2018-10-30 00:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -228,8 +230,9 @@ CREATE TABLE `students` (
   `project_start_date` datetime DEFAULT NULL,
   `project_end_date` datetime DEFAULT NULL,
   `project_aims` text,
-  `final_project_report_file` mediumblob,
+  `final_project_report_file_path` varchar(255) DEFAULT NULL,
   `final_project_report_file_name` varchar(255) DEFAULT NULL,
+  `final_project_report_new_file_name` varchar(255) DEFAULT NULL,
   `is_final_project_report_approved` tinyint(1) DEFAULT NULL,
   `supervisor_comments` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -240,11 +243,11 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`student_id`, `user_id`, `student_cat_id`, `project_id`, `project_start_date`, `project_end_date`, `project_aims`, `final_project_report_file`, `final_project_report_file_name`, `is_final_project_report_approved`, `supervisor_comments`, `created_at`, `updated_at`) VALUES
-(6, 54, NULL, 4, '2018-09-20 00:00:00', '2018-10-26 00:00:00', 'Develop web system to achieve this\r\n', NULL, NULL, NULL, NULL, '2018-10-08 19:23:21', '2018-09-20 14:57:51'),
-(7, 56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-09-17 10:05:14', '2018-09-17 10:05:14'),
-(8, 58, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-09-18 15:49:31', '2018-09-18 15:49:31'),
-(9, 59, NULL, 3, '2018-09-20 00:00:00', '2018-12-15 00:00:00', 'Develop a web based student project log\r\n', 0x43534320343633302041535349474e4d454e5420342e706466, 'CSC 4630 ASSIGNMENT 4.pdf', NULL, NULL, '2018-10-14 12:21:32', '2018-10-14 12:21:32');
+INSERT INTO `students` (`student_id`, `user_id`, `student_cat_id`, `project_id`, `project_start_date`, `project_end_date`, `project_aims`, `final_project_report_file_path`, `final_project_report_file_name`, `final_project_report_new_file_name`, `is_final_project_report_approved`, `supervisor_comments`, `created_at`, `updated_at`) VALUES
+(6, 54, NULL, 4, '2018-09-20 00:00:00', '2018-10-26 00:00:00', 'Develop web system to achieve this\r\n', NULL, NULL, NULL, NULL, NULL, '2018-10-08 19:23:21', '2018-09-20 14:57:51'),
+(7, 56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-09-17 10:05:14', '2018-09-17 10:05:14'),
+(8, 58, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-09-18 15:49:31', '2018-09-18 15:49:31'),
+(9, 59, NULL, 3, '2018-09-20 00:00:00', '2018-12-15 00:00:00', 'Develop a web based student project log\r\n', 'C:/xampp/htdocs/sprl_slim/uploads/project_reports/5bced11b1d25d6.02830254.pdf', 'CSC 4630 ASSIGNMENT 4.pdf', '5bced11b1d25d6.02830254.pdf', 1, 'Great effort on your report ', '2018-10-23 07:43:23', '2018-10-23 07:43:23');
 
 -- --------------------------------------------------------
 
@@ -292,6 +295,7 @@ INSERT INTO `supervisions` (`supervision_id`, `student_id`, `supervisor_id`, `cr
 CREATE TABLE `supervisors` (
   `supervisor_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `student_expectations` text,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -300,9 +304,9 @@ CREATE TABLE `supervisors` (
 -- Dumping data for table `supervisors`
 --
 
-INSERT INTO `supervisors` (`supervisor_id`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 55, '2018-09-14 13:17:20', '2018-09-14 13:17:20'),
-(2, 57, '2018-09-17 15:19:47', '2018-09-17 15:19:47');
+INSERT INTO `supervisors` (`supervisor_id`, `user_id`, `student_expectations`, `created_at`, `updated_at`) VALUES
+(1, 55, 'A student who reports on time, keeps me up-to-date, and hardworking ', '2018-09-14 13:17:20', '2018-10-14 22:21:19'),
+(2, 57, NULL, '2018-09-17 15:19:47', '2018-09-17 15:19:47');
 
 -- --------------------------------------------------------
 
@@ -326,7 +330,9 @@ CREATE TABLE `supervisory_meetings` (
 
 INSERT INTO `supervisory_meetings` (`supervisory_meeting_id`, `scheduled_meeting_id`, `duration`, `student_progress_comments`, `is_completed`, `created_at`, `updated_at`) VALUES
 (7, 18, '02:00:00', NULL, NULL, NULL, NULL),
-(8, 20, '00:45:00', NULL, NULL, NULL, NULL);
+(8, 20, '00:45:00', NULL, NULL, NULL, NULL),
+(9, 21, '01:30:00', NULL, NULL, NULL, NULL),
+(10, 22, '02:00:00', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -337,7 +343,7 @@ INSERT INTO `supervisory_meetings` (`supervisory_meeting_id`, `scheduled_meeting
 CREATE TABLE `supervisor_interests` (
   `interest_id` int(11) NOT NULL,
   `supervisor_id` int(11) DEFAULT NULL,
-  `project_cat_id` int(11) DEFAULT NULL,
+  `interests` text,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -346,8 +352,8 @@ CREATE TABLE `supervisor_interests` (
 -- Dumping data for table `supervisor_interests`
 --
 
-INSERT INTO `supervisor_interests` (`interest_id`, `supervisor_id`, `project_cat_id`, `created_at`, `updated_at`) VALUES
-(4, 1, 3, NULL, NULL);
+INSERT INTO `supervisor_interests` (`interest_id`, `supervisor_id`, `interests`, `created_at`, `updated_at`) VALUES
+(5, 1, 'Data Mining, Machine Learning, Artificial Intelligence, Web Applications, Mobile Applications, Electronics     ', NULL, '2018-10-14 22:18:11');
 
 -- --------------------------------------------------------
 
@@ -363,8 +369,9 @@ CREATE TABLE `tasks` (
   `sent_for_completion` tinyint(1) DEFAULT NULL,
   `is_approved` tinyint(1) DEFAULT NULL,
   `is_completed` tinyint(1) DEFAULT NULL,
-  `file_attachments` mediumblob,
+  `file_path` varchar(255) DEFAULT NULL,
   `file_name` varchar(255) DEFAULT NULL,
+  `new_file_name` varchar(255) DEFAULT NULL,
   `student_comments` text,
   `supervisor_approval_comments` text,
   `supervisor_completion_comments` text,
@@ -376,9 +383,12 @@ CREATE TABLE `tasks` (
 -- Dumping data for table `tasks`
 --
 
-INSERT INTO `tasks` (`task_id`, `supervisory_meeting_id`, `task_description`, `sent_for_approval`, `sent_for_completion`, `is_approved`, `is_completed`, `file_attachments`, `file_name`, `student_comments`, `supervisor_approval_comments`, `supervisor_completion_comments`, `created_at`, `updated_at`) VALUES
-(1, 7, 'Develop Databases', 1, 1, NULL, NULL, 0x43534320343633302041535349474e4d454e5420342e706466, 'CSC 4630 ASSIGNMENT 4.pdf', 'Completed my methodology ', 'You forgot to add developing the interface for the supervisor module', NULL, '2018-10-14 09:59:06', '2018-10-14 09:59:06'),
-(2, 8, 'Complete supervisor module', 1, 1, 0, 0, 0x50524f4752414d20434f4d50524548454e53494f4e2e70707478, 'PROGRAM COMPREHENSION.pptx', 'Program Comprehension\r\n', NULL, NULL, '2018-10-14 10:06:06', '2018-10-14 10:06:06');
+INSERT INTO `tasks` (`task_id`, `supervisory_meeting_id`, `task_description`, `sent_for_approval`, `sent_for_completion`, `is_approved`, `is_completed`, `file_path`, `file_name`, `new_file_name`, `student_comments`, `supervisor_approval_comments`, `supervisor_completion_comments`, `created_at`, `updated_at`) VALUES
+(1, 7, 'Develop Databases', 1, 1, 1, 1, 'C:/xampp/htdocs/sprl_slim/uploads/tasks/5bd0d514792f54.60902174.png', 'Screenshot (2).png', '5bd0d514792f54.60902174.png', 'Completed my methodology    ', 'This should be database presentation', NULL, '2018-10-24 20:48:10', '2018-10-24 20:48:10'),
+(2, 8, 'Complete supervisor module', 1, 1, 1, 1, 'C:/xampp/htdocs/sprl_slim/uploads/tasks/5bd0e5a0c5cb85.43999975.docx', 'CSC 4630 ASSIGNMENT 6.docx', '5bd0e5a0c5cb85.43999975.docx', 'Sorry about that this is the correct file', NULL, 'I dont understand this. Is this the file you wanted to send?  ', '2018-10-24 21:36:06', '2018-10-24 21:36:06'),
+(3, 7, 'Methodology', 1, 1, 1, 1, 'C:/xampp/htdocs/sprl_slim/uploads/tasks/5bd0d361b04463.06140526.zip', 'archive.zip', '5bd0d361b04463.06140526.zip', 'I am done', NULL, NULL, '2018-10-24 20:49:14', '2018-10-24 20:49:14'),
+(4, 9, 'Develop Database', 1, 0, 0, 0, NULL, NULL, NULL, NULL, 'Change this to Current System write up', NULL, '2018-10-24 09:41:59', '2018-10-24 09:41:59'),
+(5, 10, 'Methodology', 1, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2018-10-23 19:36:33', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -412,11 +422,11 @@ INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `other_names`,
 (34, '10', 'Mary', 'Moe', '', 'tonymulenga214.tc@gmail.com', '$2y$10$Is3Wf9g8VJVoS8biY.mgbeWvPh7Glq6ky/WtrTdpE6bzmrJh3nMRu', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-30 22:23:31', '2018-09-30 22:23:31'),
 (48, 'projectCoordinator', NULL, NULL, NULL, 'tonymchibesakunda@gmail.com', '$2y$10$pZQTfYVdjwxHBM/ZHecLOOttDYAi9p0a6G9HYU8Q5XJ24XfWg0y3u', NULL, 1, NULL, NULL, NULL, NULL, '2018-10-07 07:46:41', '2018-10-07 07:46:41'),
 (54, '15', 'Musonda', 'Lombe', 'Denning', 'denninglombe1@gmail.com', '$2y$10$a1zlBFeBOesk5PnUazo0Te.x3zbsZ6K4QKiyoGM948JF/6RfIPN7S', NULL, 1, NULL, NULL, NULL, NULL, '2018-10-08 13:28:10', '2018-10-08 13:28:10'),
-(55, '16', 'Mofya', 'Phiri', '', 'tonyyung21@gmail.com', '$2y$10$EH7wB/2NcII0v1LQaUvlfur7UdSFRbfBqJkeNVe1gnb0gTyYWEfzW', NULL, 1, NULL, NULL, 'RkJ1XGbTCDqrVyw94T9W1sjRgHgb47Mx/PVwxnhw39qpxLK5eW86Vs+TKIcrtt43rYJWTB0lbMQRrf3A3HcriZ1YM7E5FRzSq4G47UIpW8LFYJG30eWHUkTzX2Eo9Dyi', '535079595d5643565e46c54c06402d410be419acb5d818656a2cf9cfe9493de8', '2018-10-14 12:31:13', '2018-10-14 12:31:13'),
+(55, '16', 'Mofya', 'Phiri', '', 'tonyyung21@gmail.com', '$2y$10$EH7wB/2NcII0v1LQaUvlfur7UdSFRbfBqJkeNVe1gnb0gTyYWEfzW', NULL, 1, NULL, NULL, NULL, NULL, '2018-10-24 21:37:16', '2018-10-24 21:37:16'),
 (56, '14029049', 'Reuben', 'Shumba', '', 'shumbareuben@gmail.com', '$2y$10$CvZR4FouMXukLDBpkYaDOOSAyqxdFM2iB2/L6f5lAyc2My93Djkj2', NULL, 1, NULL, NULL, NULL, NULL, '2018-09-17 15:30:51', '2018-09-17 15:30:51'),
 (57, 'hg', 'Tony', 'Chibesakunda', '', 's@dfd.hj', '$2y$10$Gks..511.HpshEBVJuFHKuVXqucU7eZsJTx5HYRSNwKG2NMqetiXS', NULL, 0, 'c3caecb6898d27bc7e5bb83d178639a44d9cc40ddaf6810bf89f9ff82ae31ec5', NULL, NULL, NULL, '2018-09-17 15:19:47', '2018-09-17 15:19:47'),
 (58, '17', 'Chipo', 'Mwandila', '', 'cs@xs.zx', '$2y$10$3WL/2DnCjhUra0c4v8.Leekd5hMt0ZU/nlVXXLMKZiWLTJp/iKQa.', NULL, 1, NULL, NULL, NULL, NULL, '2018-10-03 09:55:51', '2018-10-03 09:55:51'),
-(59, '1234', 'Tony', 'Mulenga', '', 't.chibesakunda@yahoo.com', '$2y$10$ZtegbDBCvj.McSENuplpWeN95nf9Rmxi3yJDXQRb8NtyeI93Favwm', NULL, 1, NULL, NULL, 'hDNO0/W3ZFDNs7W+XlIR3n+AXs22ebIqye7gE/Lk200J+ozws3h94PaAK23TEBG2EwrHWhJage9OSD1gGvyc6Dh3Cf/Fbe/qok2oFLLx4DipbFjrX7i4KInQQkswkMKO', '25d3090ab2548dc5b9a8d5ae93542fa3a8abf54755d669f800f28cf7ac375ff0', '2018-10-12 08:32:23', '2018-10-12 08:32:23');
+(59, '1234', 'Tony', 'Mulenga', '', 't.chibesakunda@yahoo.com', '$2y$10$ZtegbDBCvj.McSENuplpWeN95nf9Rmxi3yJDXQRb8NtyeI93Favwm', NULL, 1, NULL, NULL, NULL, NULL, '2018-10-24 21:37:25', '2018-10-24 21:37:25');
 
 -- --------------------------------------------------------
 
@@ -552,8 +562,7 @@ ALTER TABLE `supervisory_meetings`
 --
 ALTER TABLE `supervisor_interests`
   ADD PRIMARY KEY (`interest_id`),
-  ADD KEY `supervisor_id` (`supervisor_id`),
-  ADD KEY `project_cat_id` (`project_cat_id`);
+  ADD KEY `supervisor_id` (`supervisor_id`);
 
 --
 -- Indexes for table `tasks`
@@ -602,7 +611,7 @@ ALTER TABLE `project_categories`
 -- AUTO_INCREMENT for table `project_objectives`
 --
 ALTER TABLE `project_objectives`
-  MODIFY `po_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `po_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `project_types`
 --
@@ -612,7 +621,7 @@ ALTER TABLE `project_types`
 -- AUTO_INCREMENT for table `scheduled_meetings`
 --
 ALTER TABLE `scheduled_meetings`
-  MODIFY `scheduled_meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `scheduled_meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 --
 -- AUTO_INCREMENT for table `schools`
 --
@@ -642,17 +651,17 @@ ALTER TABLE `supervisors`
 -- AUTO_INCREMENT for table `supervisory_meetings`
 --
 ALTER TABLE `supervisory_meetings`
-  MODIFY `supervisory_meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `supervisory_meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `supervisor_interests`
 --
 ALTER TABLE `supervisor_interests`
-  MODIFY `interest_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `interest_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `users`
 --
@@ -725,8 +734,7 @@ ALTER TABLE `supervisory_meetings`
 -- Constraints for table `supervisor_interests`
 --
 ALTER TABLE `supervisor_interests`
-  ADD CONSTRAINT `supervisor_interests_ibfk_1` FOREIGN KEY (`supervisor_id`) REFERENCES `supervisors` (`supervisor_id`),
-  ADD CONSTRAINT `supervisor_interests_ibfk_2` FOREIGN KEY (`project_cat_id`) REFERENCES `project_categories` (`project_cat_id`);
+  ADD CONSTRAINT `supervisor_interests_ibfk_1` FOREIGN KEY (`supervisor_id`) REFERENCES `supervisors` (`supervisor_id`);
 
 --
 -- Constraints for table `tasks`
