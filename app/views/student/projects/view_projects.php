@@ -29,34 +29,26 @@
                                     <th>Project Title</th>
                                     <th>Student Name</th>
                                     <th>Supervisor Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Student Project Logbook</td>
-                                    <td>Tony Mulenga Chibesakunda</td>
-                                    <td>Mrs Monica Kabemba</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_project_details') }}">More Details..</a></button>
-                                </tr>
-                                <tr>
-                                    <td>OCSAMS</td>
-                                    <td>Mukuka Chilangwe</td>
-                                    <td>Mrs Monica Kabemba</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_project_details') }}">More Details..</a></button>
-                                </tr>
-                                <tr>
-                                    <td>Web</td>
-                                    <td>John</td>
-                                    <td>Peter</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_project_details') }}">More Details..</a></button>
-                                </tr>
-                                <tr>
-                                    <td>Student Project Logbook</td>
-                                    <td>Tony Mulenga Chibesakunda</td>
-                                    <td>Mrs Monica Kabemba</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_project_details') }}">More Details..</a></button>
-                                </tr>
+                                {% if projects is empty %}
+                                    <tr><td colspan="4"><h4 style="text-align: center; color: gray;">no completed projects have been added to the system yet!</h4></td></tr>
+                                {% else %}
+                                {% for pr in projects %}
+                                    <tr>
+                                        <td>{{ pr.projectName }}</td>
+                                        <td>{{ pr.stFName }} {{ pr.stONames }} {{ pr.stLName }}</td>
+                                        <td>{{ pr.suFName }} {{ pr.suONames }} {{ pr.suLName }}</td>
+                                        <td>{{ pr.project_start_date|date("d-M-Y") }}</td>
+                                        <td>{{ pr.project_end_date|date("d-M-Y") }}</td>
+                                        <td><button type='button' class='btn btn-link'><a href="{{ urlFor('student.view_project_details', {id: pr.supervision_id}) }}">More Details..</a></button>
+                                    </tr>
+                                {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>

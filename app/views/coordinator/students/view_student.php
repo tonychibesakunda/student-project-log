@@ -48,7 +48,12 @@
                                     <th>
                                         {% if student.active == true %}<p style="color: green;">Active</p>{% else %}<p style="color: red;">Inactive</p>{% endif %}
                                     </th>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('coordinator.edit_student', {id: student.id}) }}">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ student.id }}'>Delete</button></td>
+                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('coordinator.edit_student', {id: student.id}) }}">Edit</a></button>&nbsp;
+                                    {% if student.active == 0 %}
+                                    <button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ student.id }}'>Delete</button>
+                                    {% endif %}
+                                    </td>
+                                    
                                 </tr>
                                     {% endfor %}
                                 {% endif %}

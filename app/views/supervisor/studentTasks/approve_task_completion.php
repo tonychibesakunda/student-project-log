@@ -58,7 +58,7 @@
                         {% if ts.file_path is empty %}
                           <p style="color: gray;"><b>* file not added</b></p>
                         {% else %}
-                          <a href="/sprl_slim/uploads/tasks/{{ ts.new_file_name }}" download="{{ ts.file_name }}"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i>{{ ts.file_name }}</a>
+                          <a href="/sprl_slim/uploads/tasks/{{ ts.new_file_name }}"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i>{{ ts.file_name }}</a>
                         {% endif %}
                         {% endfor %}
                       </div>
@@ -78,7 +78,7 @@
 
                 <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">
 
-                <div class="col-sm-3"></div>  
+                <div class="col-sm-3"></div>
         </fieldset>
     </form> 
     </div>

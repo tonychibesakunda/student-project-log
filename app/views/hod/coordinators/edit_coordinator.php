@@ -109,7 +109,7 @@
                 </div>
                    
                 <div class="form-group">
-                    <label for="accountStatus">Department:</label>
+                    <label for="selectDept">Department:</label>
                     <select class="form-control" id="selectDept" name="selectDept">
                         {% if departments is empty %}
                             <option>No department records</option>
@@ -127,6 +127,21 @@
                         {% endif %}
                       </select>
                       {% if errors.has('selectDept')%}<small class="form-text text-muted" style="color: red;">{{errors.first('selectDept')}}</small>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="accountStatus">Account Status:</label>
+                    <select class="form-control" id="accountStatus" name="accountStatus">
+                        {% for row in userInfo %}
+                            {% if row.active == 1 %}
+                                <option value="1" selected>Active</option>
+                                <option value="0">Inactive</option>
+                            {% else %}
+                                <option value="1" >Active</option>
+                                <option value="0" selected>Inactive</option>
+                            {% endif %}
+                        {% endfor %}
+                  </select>
+                  {% if errors.has('accountStatus')%}<small class="form-text text-muted" style="color: red;">{{errors.first('accountStatus')}}</small>{% endif %}
                 </div>
 
             </div>

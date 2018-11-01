@@ -70,6 +70,7 @@ $app->post('/coordinator/supervisors/edit_supervisor/:id', $coordinator(), funct
 		$email = $request->post('email');
 		$school = $request->post('selectSchool');
 		$dept = $request->post('selectDept');
+		$accountStatus = $request->post('accountStatus');
 
 		//validate user input
 		$v = $app->validation;
@@ -89,17 +90,41 @@ $app->post('/coordinator/supervisors/edit_supervisor/:id', $coordinator(), funct
 				$userId = $row->id;
 			}
 
-			//update the user table and location table using their respective models
-			Location::where('user_id', '=', $userId)
-						->update([
-							'school_id' => $school,
-							'department_id' => $dept
-						]);
+			if($accountStatus == 1){
+				//update the user table and location table using their respective models
+				Location::where('user_id', '=', $userId)
+							->update([
+								'school_id' => $school,
+								'department_id' => $dept
+							]);
 
+				// update users table
+				User::where('id', '=', $userId)
+						->update([
+							'active' => TRUE,
+							'active_hash' => NULL
+						]);
+				
+				$app->flash('success', "Supervisor details have been successfully updated.");
+				return $app->response->redirect($app->urlFor('coordinator.edit_supervisor', array('id' => $userId)));
+			}elseif($accountStatus == 0){
+				//update the user table and location table using their respective models
+				Location::where('user_id', '=', $userId)
+							->update([
+								'school_id' => $school,
+								'department_id' => $dept
+							]);
+
+				// update users table
+				User::where('id', '=', $userId)
+						->update([
+							'active' => FALSE
+						]);
+				
+				$app->flash('success', "Supervisor details have been successfully updated.");
+				return $app->response->redirect($app->urlFor('coordinator.edit_supervisor', array('id' => $userId)));
+			}
 			
-			
-			$app->flash('success', "Supervisor details have been successfully updated.");
-			return $app->response->redirect($app->urlFor('coordinator.edit_supervisor', array('id' => $userId)));
 		}
 
 		//pass errors into view and save previous type info

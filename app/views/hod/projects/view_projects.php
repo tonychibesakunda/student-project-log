@@ -26,25 +26,49 @@
                         <table id="myTable" class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Username</th>
-                                    <th>Email</th>
+                                    <th>Project Title</th>
+                                    <th>Student Name</th>
+                                    <th>Supervisor Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Project Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Tony Mulenga Chibesakunda</td>
-                                    <th>13031104</th>
-                                    <td>tonymchibesakunda@gmail.com</td>
-                                    <td><button type='button' class='btn btn-link'><a href="#">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete'>Delete</button></td>
-                                </tr>
+                                {% if projects is empty %}
+                                    <tr><td colspan="7"><h4 style="text-align: center; color: gray;">no projects have been added to the system yet!</h4></td></tr>
+                                {% else %}
+                                {% for pr in projects %}
+                                    <tr>
+                                        <td>
+                                          {% if pr.projectName is empty %}
+                                            <p style="color: red;"><b>project has not yet been added.</b></p>
+                                          {% else %}
+                                            {{ pr.projectName }}
+                                          {% endif %}
+                                        </td>
+                                        <td>{{ pr.stFName }} {{ pr.stONames }} {{ pr.stLName }}</td>
+                                        <td>{{ pr.suFName }} {{ pr.suONames }} {{ pr.suLName }}</td>
+                                        <td>{{ pr.project_start_date|date("d-M-Y") }}</td>
+                                        <td>{{ pr.project_end_date|date("d-M-Y") }}</td>
+                                        <td>
+                                          {% if pr.is_final_project_report_approved is empty %}
+                                            <p style="color: orange;"><b>In Progress...</b></p>
+                                          {% else %}
+                                            <p style="color: green;"><b>Completed</b></p>
+                                          {% endif %}
+                                        </td>
+                                        <td><button type='button' class='btn btn-link'><a href="{{ urlFor('hod.view_student_project', {id: pr.supervision_id}) }}">More Details..</a></button>
+                                    </tr>
+                                {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
                             
-                    <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
-                            
+                    <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
+                    
                 </fieldset>
             </form>
             

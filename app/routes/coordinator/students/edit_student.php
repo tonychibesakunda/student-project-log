@@ -69,6 +69,7 @@ $app->post('/coordinator/students/edit_student/:id', $coordinator(), function($u
 		$email = $request->post('email');
 		$school = $request->post('selectSchool');
 		$dept = $request->post('selectDept');
+		$accountStatus = $request->post('accountStatus');
 
 		//validate user input
 		$v = $app->validation;
@@ -88,17 +89,47 @@ $app->post('/coordinator/students/edit_student/:id', $coordinator(), function($u
 				$userId = $row->id;
 			}
 
-			//update the location table using their respective models
-			Location::where('user_id', '=', $userId)
+			if($accountStatus == 1){
+				//update the location table using their respective models
+				Location::where('user_id', '=', $userId)
+							->update([
+								'school_id' => $school,
+								'department_id' => $dept
+							]);
+
+				// update users table
+				User::where('id', '=', $userId)
 						->update([
-							'school_id' => $school,
-							'department_id' => $dept
+							'active' => TRUE,
+							'active_hash' => NULL
 						]);
 
 			
 			
-			$app->flash('success', "Student details have been successfully updated.");
-			return $app->response->redirect($app->urlFor('coordinator.edit_student', array('id' => $userId)));
+				$app->flash('success', "Student details have been successfully updated.");
+				return $app->response->redirect($app->urlFor('coordinator.edit_student', array('id' => $userId)));
+
+			}elseif($accountStatus == 0){
+				//update the location table using their respective models
+				Location::where('user_id', '=', $userId)
+							->update([
+								'school_id' => $school,
+								'department_id' => $dept
+							]);
+
+				// update users table
+				User::where('id', '=', $userId)
+						->update([
+							'active' => FALSE
+						]);
+
+			
+			
+				$app->flash('success', "Student details have been successfully updated.");
+				return $app->response->redirect($app->urlFor('coordinator.edit_student', array('id' => $userId)));
+			}
+
+			
 		}
 
 		//pass errors into view and save previous type info

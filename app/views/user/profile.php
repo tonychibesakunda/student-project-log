@@ -27,38 +27,40 @@
                 <div class=" col-md-9 col-lg-9 "> 
                   <table class="table table-user-information">
                     <tbody>
+                      {% for u in users %}
                     	<tr>
                     		<td>Username:</td>
-                    		<td>{{ user.username }}</td>
+                    		<td>{{ u.username }}</td>
                     	</tr>
                     	<tr>
                     		<td>First Name:</td>
-                    		<td>{{ user.first_name }}</td>
+                    		<td>{{ u.first_name }}</td>
                     	</tr>
                     	<tr>
                     		<td>Last Name:</td>
-                    		<td>{{ user.last_name }}</td>
+                    		<td>{{ u.last_name }}</td>
                     	</tr>
                     	<tr>
                     		<td>Other Names:</td>
-                    		<td>{{ user.other_names }}</td>
+                    		<td>{{ u.other_names }}</td>
                     	</tr>
                     	<tr>
                         <td>Email:</td>
-                        <td>{{ user.email }}</td>
+                        <td>{{ u.email }}</td>
                       </tr>
                       <tr>
-                    		<td>Password:</td>
-                    		<td>{{ user.password }}</td>
+                    		<td>School:</td>
+                    		<td>{{ u.school_name }}</td>
                     	</tr>
                       <tr>
                         <td>Department:</td>
-                        <td>Programming</td>
+                        <td>{{ u.department_name }}</td>
                       </tr>
                       <tr>
                         <td>Account created at:</td>
-                        <td>{{ user.created_at }}</td>
+                        <td>{{ u.created_at|date("d-M-Y H:i") }}</td>
                       </tr>
+                      {% endfor %}
                       <!--<tr>
                         <td>Date of Birth</td>
                         <td>01/24/1988</td>

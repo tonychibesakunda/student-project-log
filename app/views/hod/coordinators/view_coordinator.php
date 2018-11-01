@@ -27,6 +27,7 @@
                                 <tr>
                                     <th>Username</th>
                                     <th>Email</th>
+                                    <th>Account Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -34,7 +35,7 @@
                                 {% if coordinators is empty %}
                                     <tr> 
                                         
-                                        <td colspan="3"><h4 style="text-align: center; color: gray;">no records have been added to the system!</h4></td>
+                                        <td colspan="4"><h4 style="text-align: center; color: gray;">no records have been added to the system!</h4></td>
                                     </tr>
                                 {% else %}
                                     {% for coordinator in coordinators %}
@@ -43,7 +44,13 @@
                                         <input type="hidden" name="_METHOD" value="DELETE">
                                         <td>{{ coordinator.username }}</td>
                                         <td>{{ coordinator.email }}</td>
-                                        <td><button type='button' class='btn btn-link' name="edit"><a href="{{ urlFor('hod.edit_coordinator', {id: coordinator.id}) }}">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ coordinator.id }}'>Delete</button></td>
+                                        <th>
+                                            {% if coordinator.active == true %}<p style="color: green;">Active</p>{% else %}<p style="color: red;">Inactive</p>{% endif %}
+                                        </th>
+                                        <td><button type='button' class='btn btn-link' name="edit"><a href="{{ urlFor('hod.edit_coordinator', {id: coordinator.id}) }}">Edit</a></button>&nbsp;
+                                        {% if coordinator.active == 0 %}
+                                        <button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ coordinator.id }}'>Delete</button></td>
+                                        {% endif %}
                                     </tr>
                                     {% endfor %}   
                                 {% endif %}    

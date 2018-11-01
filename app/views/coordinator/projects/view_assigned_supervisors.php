@@ -74,7 +74,7 @@
                                     <td>{{ supervision.stFName }} {{ supervision.stONames }} {{ supervision.stLName }}</td>
                                     <td>{{ supervision.suFName }} {{ supervision.suONames }} {{ supervision.suLName }}</td>
                                     <td>{% if supervision.projectName is empty %}<p style="color: red;"><b>not yet added..</b></p>{% else %}{{ supervision.projectName }}{% endif %}</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('coordinator.edit_assigned_supervisors', {id: supervision.supervision_id}) }}">Edit</a></button>&nbsp;<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ supervision.supervision_id }}'>Delete</button></td>
+                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('coordinator.edit_assigned_supervisors', {id: supervision.supervision_id}) }}">Edit</a></button>&nbsp;<!--<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#verifyDelete{{ supervision.supervision_id }}'>Delete</button></td>-->
                                 </tr>
                               {% endfor %}
                               {% endif %}

@@ -28,7 +28,9 @@
                     <div class=" col-sm-6">
                         <div class="panel panel-info">
                             <div class="panel-heading">
-                              <h3 class="panel-title">Student Name</h3>
+                                {% for pd in project_details %}
+                                <h3 class="panel-title"><b>{{ pd.stFName }} {{ pd.stONames }} {{ pd.stLName }}</b></h3>
+                                {% endfor %}
                             </div>
                             <div class="panel-body">
                                 
@@ -36,46 +38,97 @@
                                   <table class="table table-user-information">
                                     <tbody>
                                         <tr>
-                                            <td>Student Name:</td>
-                                            <td>Student Full Names</td>
+                                            <th>Student Name:</th>
+                                            {% for pd in project_details %}
+                                            <td>{{ pd.stFName }} {{ pd.stONames }} {{ pd.stLName }}</td>
+                                            {% endfor %}
                                         </tr>
                                         <tr>
-                                            <td>Supervisor Name:</td>
-                                            <td>Supervisor Full Names</td>
+                                            <th>Supervisor Name:</th>
+                                            {% for pd in project_details %}
+                                            <td>{{ pd.suFName }} {{ pd.suONames }} {{ pd.suLName }}</td>
+                                            {% endfor %}
                                         </tr>
                                         <tr>
-                                            <td>Project Title:</td>
-                                            <td>Project Name</td>
+                                            <th>Project Title:</th>
+                                            {% for pd in project_details %}
+                                            <td>{{ pd.projectName }}</td>
+                                            {% endfor %}
                                         </tr>
                                         <tr>
-                                            <td>Project Category:</td>
-                                            <td>Web Application</td>
+                                            <th>Project Category:</th>
+                                            {% for pd in project_details %}
+                                            <td>{{ pd.project_category }}</td>
+                                            {% endfor %}
                                         </tr>
                                         <tr>
-                                        <td>Project Type:</td>
-                                        <td>Taught</td>
-                                      </tr>
-                                      
+                                            <th>Project Type:</th>
+                                            {% for pd in project_details %}
+                                            <td>{{ pd.project_type }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <th>Project Start Date:</th>
+                                            {% for pd in project_details %}
+                                            <td>{{ pd.project_start_date|date("d-M-Y") }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <th>Project End Date:</th>
+                                            {% for pd in project_details %}
+                                            <td>{{ pd.project_end_date|date("d-M-Y") }}</td>
+                                            {% endfor %}
+                                        </tr>
                                     </tbody>
                                   </table>
                                 </div><!-- end of table responsive -->
                             </div><!-- end of panel body div -->  
                           </div><!-- end of panel div -->
+                          <h4><b>Project Aims:</b></h4>
+                          {% for pd in project_details %}
+                              <p>{{ pd.project_aims }}</p><br>
+                          {% endfor %}
                           <div class="item-page-field-wrapper table word-break">
-                            <h5>View/<wbr></wbr>Open</h5>
+                            <h4><b>Project Report (Thesis):</b></h4>
                             <div>
-                                <a href="#"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i> Journal artcle. (155.5Kb)</a>
+                                {% for pd in project_details %}
+                                <a href="/sprl_slim/uploads/project_reports/{{ pd.final_project_report_new_file_name }}"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i> {{ pd.final_project_report_file_name }}</a>
+                                {% endfor %}
                             </div>
                         </div>
                         </div><!-- end of col-sm-6 div -->
 
                       <div class="col-sm-6">
-                          <h4>Project Description:</h4>
-                          <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.
+                          <h4><b>Project Description:</b></h4>
+                          {% for pd in project_details%}
+                          <p>{{ pd.project_description }}</p>
+                          {% endfor %}
+                      </div>
 
-Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.
-
-Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+                      <div class="col-sm-12">
+                        <h3 style="text-align: center;"><b>Tasks taken during the project</b></h3>
+                          <div class="table-responsive">
+                            <table id="myTable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Agreed On</th>
+                                        <th>Task</th>
+                                        <th>File</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ts in tasks %}    
+                                        <tr>
+                                            <td>{{ ts.scheduled_date|date("d-M-Y") }}</td>
+                                            <td>{{ ts.task_description }}</td>
+                                            <td>
+                                               <a href="/sprl_slim/uploads/tasks/{{ ts.new_file_name }}"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i> {{ ts.file_name }}</a> 
+                                            </td>
+                                        </tr>
+                                    {% endfor %}    
+                                </tbody>
+                            </table>
+                        </div>
                       </div>
                             
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   

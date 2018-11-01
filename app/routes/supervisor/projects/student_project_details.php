@@ -19,10 +19,6 @@ $app->get('/supervisor/projects/student_project_details/:id', $supervisor(), fun
 		$new_file_name = $row->final_project_report_new_file_name;
 	}
 
-	// header("Content-type: application/pdf");
-	// header("Content-Disposition: attachment; filename=$file");
-	// header("Content-Description: PHP Generated Data");
-
 	// get student project objectives
 	$obj = "SELECT * FROM project_objectives WHERE student_id=$student_id";
 	$project_objectives = DB::select(DB::raw($obj));

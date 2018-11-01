@@ -1,13 +1,14 @@
 {% extends 'templates/default.php' %}
 
-{% block title %}Student Projects{% endblock %}
+{% block title %}View Student Project{% endblock %}
 
 {% block content %}
-    <div class="container-fluid text-center">
+	<div class="container-fluid text-center">
     <div class="row content"><br>
 
         <div class="col-sm-2 sidenav">
-            <p><a href="{{ urlFor('supervisor.student_projects') }}">Student Projects</a></p>
+            <p><a href="{{ urlFor('hod.view_projects') }}">View Projects</a></p>
+             
         </div>
 
         <div class="col-sm-8  text-left" id="container">
@@ -17,15 +18,16 @@
             {% include 'templates/partials/warning_messages.php' %}
 
             {% for pd in project_details %}
-            <form action="{{ urlFor('supervisor.student_project_details.post', {id: pd.supervision_id}) }}" method="POST" autocomplete="off" enctype="multipart/form-data">
+            <form action="{{ urlFor('hod.view_student_project.post',{id: pd.supervision_id}) }}" method="POST" autocomplete="off" enctype="multipart/form-data">
             {% endfor %}
-                <fieldset>
-                
-                    <legend class="text-center">Project Details</legend>
+                 <fieldset>
+
+                  <legend class="text-center">Student Project Details</legend>
 
                     <div class="col-sm-12">
-                      <button type="submit" class="btn btn-link"><a href="{{ urlFor('supervisor.student_projects') }}">&larr; Back</a></button>
+                      <button type="submit" class="btn btn-link"><a href="{{ urlFor('hod.view_projects') }}">&larr; Back</a></button>
                     </div>
+
                     <div class=" col-sm-6">
                         <div class="panel panel-info">
                             <div class="panel-heading">
@@ -132,7 +134,7 @@
                         </div>
                         </div><!-- end of col-sm-6 div -->
 
-                      <div class="col-sm-6">
+                        <div class="col-sm-6">
                           <h4><b>Project Description:</b></h4>
                           {% for pd in project_details %}
                             {% if pd.project_description is empty %}
@@ -143,7 +145,7 @@
                           {% endfor %}
                       </div>  
 
-                    <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}"> 
+                    
                     <div class="col-sm-12">
                       <h3 style="text-align: center;"><b>Project Objectives</b></h3>
                       <div class="table-responsive">
@@ -153,7 +155,6 @@
                                     <th>Project Objective</th>
                                     <th>Sent for Approval</th>
                                     <th>Objective Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -180,11 +181,66 @@
                                             <p style="color: red;">Incomplete</p>
                                         {% endif %}
                                     </td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                      
+                    </div>
+                    <div class="col-sm-12">
+                      <h3 style="text-align: center;"><b>Project Tasks</b></h3>
+                      <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Project Tasks</th>
+                                    <th colspan="2" style="">
+                                        <p style="text-align: center;">Task Sent for:</p>
+                                        <p><span style="float: left;">Approval</span>&nbsp;  <span style="float: right;">Completion</span></p>
+                                    </th>
+                                    <th>Approved</th>
+                                    <th>Completed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if tasks is empty %}
+                                    <tr>
+                                        <td colspan="5"><h4 style="text-align: center; color: gray;">tasks have not been added to the system yet!</h4></td>
+                                    </tr>
+                                {% else %}
+                                {% for ts in tasks %}
+                                <tr>
+                                    <input type="hidden" name="objective" data-target="selectObjective{{ po.po_id }}" value="{{ po.po_id }}">
+                                    <td>{{ ts.task_description }}</td>
                                     <td>
-
-                                        <button type='button' class='btn btn-default'><a href="{{ urlFor('supervisor.project_objective_comments', {id: po.po_id}) }}" title="Add Comments"><span class="glyphicon glyphicon-plus"></span></a></button>
-                                        
-                                        <button type='submit' class='btn btn-success' value="{{ po.po_id }}" title="Approve Objective" name="approve" data-target="#selectObjective{{ po.po_id }}"><span class="glyphicon glyphicon-check"></span></button>
+                                        {% if ts.sent_for_approval == true %}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                        {% else %}
+                                            <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ts.sent_for_completion == true %}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                        {% else %}
+                                            <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ts.is_approved == true %}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                        {% else %}
+                                            <p style="text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ts.is_completed == true%}
+                                            <p style="text-align: center; color: green;"><span class="glyphicon glyphicon-ok"></span></p>
+                                        {% else %}
+                                            <p style=" text-align: center; color: red;"><span class="glyphicon glyphicon-remove"></span></p>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -232,10 +288,6 @@
                                           {% endif %}
                                       </td>
                                       <td>
-
-                                          <button type='button' class='btn btn-default'><a href="{{ urlFor('supervisor.project_report_comments', {id: pd.student_id}) }}" title="Add Comments"><span class="glyphicon glyphicon-plus"></span></a></button>
-                                          
-                                          <button type='submit' class='btn btn-success' title="Approve Report" name="approve_report" data-target="#selectReport{{ pd.student_id }}"><span class="glyphicon glyphicon-check" value="{{ pd.student_id }}"></span></button>
                                           <button type='submit' class='btn btn-info' title="Download Report" name="download"><span class="glyphicon glyphicon-download"></span></button>
                                       </td>
                                   </tr>
@@ -249,18 +301,37 @@
                         </div>
 
                         <div class="col-sm-2"></div>
-
-                        
-                     
+                            
+                    <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
+                            
                 </fieldset>
             </form>
-
+            
         </div>
 
         <div class="col-sm-2 sidenav">
             <div class="well">
                 <label style="font-size: 20px;">Tip <span class="glyphicon glyphicon-info-sign"></span></label>
                 <p>This section is used for viewing student projects</p>
+            </div>
+        </div>
+
+        <div class="modal fade" id="verifyDelete" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal Content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h1 class="modal-title"><span class="label label-danger">Are You Sure?</span></h1>
+                    </div>
+                    <div class="modal-body">
+                        <p>This record will permanently be deleted / removed from the system. Do you wish to continue?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>&nbsp;
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
 

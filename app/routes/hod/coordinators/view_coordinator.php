@@ -12,6 +12,7 @@ $app->get('/hod/coordinators/view_coordinator', $hod(), function() use($app){
             	'users.id',
                 'users.username',
                 'users.email',
+                'users.active',
                 'users_permissions.is_coordinator'
             )
             ->join(

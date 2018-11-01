@@ -67,6 +67,7 @@ $app->post('/hod/coordinators/edit_coordinator/:id', $hod(), function($userId) u
 		$email = $request->post('email');
 		$school = $request->post('selectSchool');
 		$dept = $request->post('selectDept');
+		$accountStatus = $request->post('accountStatus');
 
 		//validate user input
 		$v = $app->validation;
@@ -86,17 +87,45 @@ $app->post('/hod/coordinators/edit_coordinator/:id', $hod(), function($userId) u
 				$userId = $row->id;
 			}
 
-			//update the user table and location table using their respective models
-			Location::where('user_id', '=', $userId)
+			if($accountStatus == 1){
+
+				//update the user table and location table using their respective models
+				Location::where('user_id', '=', $userId)
+							->update([
+								'school_id' => $school,
+								'department_id' => $dept
+							]);
+
+				// update users table
+				User::where('id', '=', $userId)
 						->update([
-							'school_id' => $school,
-							'department_id' => $dept
+							'active' => TRUE,
+							'active_hash' => NULL
 						]);
+				
+				$app->flash('success', "Project coordinator details have been successfully updated.");
+				return $app->response->redirect($app->urlFor('hod.edit_coordinator', array('id' => $userId)));
+
+			}elseif($accountStatus == 0){
+
+				//update the user table and location table using their respective models
+				Location::where('user_id', '=', $userId)
+							->update([
+								'school_id' => $school,
+								'department_id' => $dept
+							]);
+
+				// update users table
+				User::where('id', '=', $userId)
+						->update([
+							'active' => FALSE
+						]);
+				
+				$app->flash('success', "Project coordinator details have been successfully updated.");
+				return $app->response->redirect($app->urlFor('hod.edit_coordinator', array('id' => $userId)));
+			}
 
 			
-			
-			$app->flash('success', "Project coordinator details have been successfully updated.");
-			return $app->response->redirect($app->urlFor('hod.edit_coordinator', array('id' => $userId)));
 		}
 
 		//pass errors into view and save previous type info

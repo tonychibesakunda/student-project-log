@@ -20,7 +20,7 @@
             
                 <fieldset>
 
-                    <legend class="text-center">View Assigned Students</legend>
+                    <legend class="text-center">View Assigned Students and Supervisors</legend>
 
                     <div class="table-responsive">
                         <table id="myTable" class="table table-bordered">
@@ -29,22 +29,90 @@
                                     <th>Student Name</th>
                                     <th>Supervisor Name</th>
                                     <th>Project Title</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% if supervisions is empty %}
+                                    <tr>
+                                      <td colspan="3"><h4 style="text-align: center; color: gray;">no records have been added to the system!</h4></td>
+                                    </tr>
+                                {% else %}
+                                {% for supervision in supervisions %}
                                 <tr>
-                                    <td>Tony Mulenga Chibesakunda</td>
-                                    <td>Mrs Monica Kabemba</td>
-                                    <td>Student Project Logbook</td>
-                                    <td><button type='button' class='btn btn-link'><a href="{{ urlFor('hod.view_student_project') }}">More Details..</a></button>
+                                    <td>{{ supervision.stFName }} {{ supervision.stONames }} {{ supervision.stLName }}</td>
+                                    <td>{{ supervision.suFName }} {{ supervision.suONames }} {{ supervision.suLName }}</td>
+                                    <td>{% if supervision.projectName is empty %}<p style="color: red;"><b>not yet added..</b></p>{% else %}{{ supervision.projectName }}{% endif %}</td>
                                 </tr>
+                              {% endfor %}
+                              {% endif %}
                             </tbody>
-                        </table>
+                        </table><br><br>
                     </div>
                             
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
-                            
+                    <div class="col-sm-12">
+                        <legend class="text-center">Supervisions</legend>
+                        <div class="col-sm-2"></div>
+
+                    <div class="col-sm-8">
+                      <h3><b>Unassigned Students</b></h3>
+                      <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered display">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Username</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% if unassignedStudents is empty %}
+                                <tr>
+                                  <td colspan="2"><h4 style="text-align: center; color: gray;">All students have been assigned supervisors!</h4></td>
+                                </tr>
+                              {% else %}
+                              {% for unassignedStudent in unassignedStudents %}
+                                <tr>
+                                    <td>{{ unassignedStudent.first_name }} {{ unassignedStudent.other_names }} {{ unassignedStudent.last_name }}</td>
+                                    <td>{{ unassignedStudent.username }}</td>
+                                </tr>
+                              {% endfor %}
+                              {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-12"></div>
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-8">
+                      <h3><b>Supervisors</b></h3>
+                      <div class="table-responsive">
+                        <table id="myTable1" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Supervisor Name</th>
+                                    <th>Number of students supervising</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% if supervisors is empty %}
+                                <tr>
+                                  <td colspan="2"><h4 style="text-align: center; color: gray;">no unassigned supervisor records found in the system!</h4></td>
+                                </tr>
+                              {% else %}
+                              {% for supervisor in supervisors %}
+                                <tr>
+                                    <td>{{ supervisor.first_name }} {{ supervisor.other_names }} {{ supervisor.last_name }}</td>
+                                    <td>{{ val[supervisor.id]  }}</td>
+                                </tr>
+                              {% endfor %}
+                              {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div class="col-sm-2"></div>
+                    </div>   
                 </fieldset>
             </form>
             

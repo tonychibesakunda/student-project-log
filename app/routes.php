@@ -27,7 +27,7 @@ require INC_ROOT.'/app/routes/user/all.php';
 require INC_ROOT.'/app/routes/account/profile.php';
 
 
-/** Coordinator Routes **/
+					/** Coordinator Routes **/
 // coordinator/students routes
 require INC_ROOT.'/app/routes/coordinator/students/add_student.php';
 require INC_ROOT.'/app/routes/coordinator/students/view_student.php';
@@ -35,6 +35,7 @@ require INC_ROOT.'/app/routes/coordinator/students/edit_student.php';
 
 // coordinator/projects routes
 require INC_ROOT.'/app/routes/coordinator/projects/view_projects.php';
+require INC_ROOT.'/app/routes/coordinator/projects/view_project_details.php';
 require INC_ROOT.'/app/routes/coordinator/projects/add_project_category.php';
 require INC_ROOT.'/app/routes/coordinator/projects/view_project_category.php';
 require INC_ROOT.'/app/routes/coordinator/projects/edit_project_category.php';
@@ -54,7 +55,7 @@ require INC_ROOT.'/app/routes/coordinator/supervisors/view_supervisor.php';
 require INC_ROOT.'/app/routes/coordinator/supervisors/edit_supervisor.php';
 
 
-/** HOD Routes **/
+					/** HOD Routes **/
 // hod/dashboard route
 require INC_ROOT.'/app/routes/hod/dashboard/dashboard.php';
 
@@ -65,13 +66,14 @@ require INC_ROOT.'/app/routes/hod/coordinators/edit_coordinator.php';
 
 // hod/projects route
 require INC_ROOT.'/app/routes/hod/projects/view_projects.php';
+require INC_ROOT.'/app/routes/hod/projects/view_student_project.php';
 
 // hod/students route
 require INC_ROOT.'/app/routes/hod/students/view_assigned_students.php';
-require INC_ROOT.'/app/routes/hod/students/view_student_project.php';
 
 
-/** Student Routes **/
+
+					/** Student Routes **/
 // student/dashboard route
 require INC_ROOT.'/app/routes/student/dashboard/dashboard.php';
 
@@ -109,7 +111,7 @@ require INC_ROOT.'/app/routes/student/tasks/edit_supervisory_meeting.php';
 require INC_ROOT.'/app/routes/student/tasks/view_supervisory_meetings.php';
 
 
-/** Supervisor Routes **/
+					/** Supervisor Routes **/
 // supervisor/dashboard route
 require INC_ROOT.'/app/routes/supervisor/dashboard/dashboard.php';
 
