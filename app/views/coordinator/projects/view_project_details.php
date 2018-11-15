@@ -184,7 +184,7 @@
                             <thead>
                                 <tr>
                                     <th>Project Objective</th>
-                                    <th>Approved</th>
+                                    <th>Sent For Approval</th>
                                     <th>Objective Status</th>
                                 </tr>
                             </thead>

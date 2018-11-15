@@ -78,42 +78,66 @@ $app->post('/student/tasks/add_task', $student(), function() use($app){
 
 	if($v->passes()){
 
-		//check if the same task and supervisory meeting have been added already
-		$query2 = "SELECT supervisory_meeting_id, task_description FROM tasks WHERE supervisory_meeting_id=$supervisory_meeting AND task_description='$task'";
-		$check = DB::select(DB::raw($query2));
+		//check if the project is completed
+		$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+		$project_complete = DB::select(DB::raw($prc));
 
-		if(count($check) > 0 ){
+		if(count($project_complete) > 0){
 			//flash message and redirect
-			$app->flash('error', 'This task has already been added to this supervisory meeting.');
+			$app->flash('warning', 'This project has already been completed.');
 			return $app->response->redirect($app->urlFor('student.add_task'));
-		}elseif(count($check) == 0){
+		}else{
+			// check if project has been added to the system
+			$pr = "SELECT project_id FROM `students` WHERE user_id=$user_id";
+			$pro = DB::select(DB::raw($pr));
 
-			// insert task in database
-			DB::table('tasks')
-				->insert([
-					'supervisory_meeting_id' => $supervisory_meeting,
-					'task_description' => $task,
-					'sent_for_approval' => TRUE,
-					'sent_for_completion' => FALSE,
-					'is_approved' => FALSE,
-					'is_completed' => FALSE
-				]);
+			foreach($pro as $p){
+				$pro_id = $p->project_id;
+			}
 
-			// send email to supervisor
-			// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
+			if(is_null($pro_id)){
+				//flash message and redirect
+				$app->flash('error', 'You must add your project to the system before performing this function');
+				return $app->response->redirect($app->urlFor('student.add_task'));
+			}else{
+				//check if the same task and supervisory meeting have been added already
+				$query2 = "SELECT supervisory_meeting_id, task_description FROM tasks WHERE supervisory_meeting_id=$supervisory_meeting AND task_description='$task'";
+				$check = DB::select(DB::raw($query2));
 
-	  //           $studentEmail = '';
-	  //           foreach ($student as $row) {
-	  //               $studentEmail = $row->email;
-	  //           }
-	  //           $message->to($studentEmail);
-	  //           $message->subject('Supervisor Assigned.');
-	  //       });
+				if(count($check) > 0 ){
+					//flash message and redirect
+					$app->flash('error', 'This task has already been added to this supervisory meeting.');
+					return $app->response->redirect($app->urlFor('student.add_task'));
+				}elseif(count($check) == 0){
 
-			//flash message and redirect
-			$app->flash('success', 'Task has been successfully added to your log and has also been sent for approval.');
-			return $app->response->redirect($app->urlFor('student.add_task'));			
+					// insert task in database
+					DB::table('tasks')
+						->insert([
+							'supervisory_meeting_id' => $supervisory_meeting,
+							'task_description' => $task,
+							'sent_for_approval' => TRUE,
+							'sent_for_completion' => FALSE,
+							'is_approved' => FALSE,
+							'is_completed' => FALSE
+						]);
 
+					// send email to supervisor
+					// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
+
+			  //           $studentEmail = '';
+			  //           foreach ($student as $row) {
+			  //               $studentEmail = $row->email;
+			  //           }
+			  //           $message->to($studentEmail);
+			  //           $message->subject('Supervisor Assigned.');
+			  //       });
+
+					//flash message and redirect
+					$app->flash('success', 'Task has been successfully added to your log and has also been sent for approval.');
+					return $app->response->redirect($app->urlFor('student.add_task'));			
+
+				}
+			}
 		}
 
 	}

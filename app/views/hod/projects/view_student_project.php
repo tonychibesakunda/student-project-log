@@ -192,7 +192,7 @@
                     <div class="col-sm-12">
                       <h3 style="text-align: center;"><b>Project Tasks</b></h3>
                       <div class="table-responsive">
-                        <table id="myTable" class="table table-bordered">
+                        <table id="myTable1" class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>Project Tasks</th>

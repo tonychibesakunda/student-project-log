@@ -47,11 +47,11 @@ $app->post('/student/myproject/add_project', $student(), function() use($app){
 	$v->validate([
 		'project_name' => [$project_name, 'required|alnumDash|max(250)'],
 		'project_category' => [$project_category, 'int'],
-		'project_description' => [$project_description, 'required|alnumDash'],
+		'project_description' => [$project_description, 'required'],
 		'project_start_date' => [$project_start_date, 'required|date'],
 		'project_end_date' => [$project_end_date, 'required|date'],
 		'project_type' => [$project_type, 'int'],
-		'project_aim' => [$project_aim, 'required|alnumDash']
+		'project_aim' => [$project_aim, 'required']
 	]);
 
 	if($v->passes()){

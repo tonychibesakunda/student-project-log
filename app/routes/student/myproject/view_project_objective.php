@@ -29,9 +29,6 @@ $app->get('/student/myproject/view_project_objective', $student(), function() us
 
 $app->post('/student/myproject/view_project_objective', $student(), function() use($app){
 
-	
-
-
 	if(isset($_POST['complete'])){
 		$user_id = $_SESSION[$app->config->get('auth.session')];
 		$student_id = '';
@@ -40,12 +37,25 @@ $app->post('/student/myproject/view_project_objective', $student(), function() u
 		$pid=$_POST['complete'];
 
 		//get student id
-		$get_id =  "SELECT student_id FROM students WHERE user_id=$user_id";
-		$sid = DB::select(DB::raw($get_id));
+		$get_id =  "SELECT students.student_id, users.* FROM students INNER JOIN users ON students.user_id=users.id WHERE user_id=$user_id";
+		$student = DB::select(DB::raw($get_id));
 
-		foreach ($sid as $row) {
+		foreach ($student as $row) {
 			$student_id = $row->student_id;
 		}
+
+		//get assigned supervisors
+		$sup = "SELECT supervisions.*, (SELECT users.first_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suFName, (SELECT users.other_names FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suONames, (SELECT users.last_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suLName, (SELECT users.email FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suEmail FROM supervisions WHERE student_id=$student_id";
+		$supervisors = DB::select(DB::raw($sup));
+
+		// //get student id
+		// $get_id =  "SELECT student_id FROM students WHERE user_id=$user_id";
+		// $sid = DB::select(DB::raw($get_id));
+
+
+		// foreach ($sid as $row) {
+		// 	$student_id = $row->student_id;
+		// }
 
 		//project objectives
 		$query = "SELECT * FROM project_objectives WHERE student_id=$student_id AND po_id=$pid";
@@ -66,11 +76,23 @@ $app->post('/student/myproject/view_project_objective', $student(), function() u
 									'sent_for_approval' => TRUE
 								]);
 
-			
 
-			//flash message and redirect
+			// Send email to supervisor
+	        $app->mail->send('email/project_objectives/approve_project_objective.php', ['student' => $student, 'supervisors' => $supervisors, 'project_objectives' => $project_objectives], function($message) use($supervisors){
+
+	            $supervisor_email = '';
+	            //get supervisor email
+				foreach ($supervisors as $sup) {
+						$supervisor_email = $sup->suEmail;
+					}
+	            $message->to($supervisor_email);
+	            $message->subject('Approve Project Objective.');
+	        });
+
+	        //flash message and redirect
 			$app->flash('info', 'Project Objective has been sent for approval.');
 			return $app->response->redirect($app->urlFor('student.view_project_objective'));
+
 
 		}elseif($sent_for_approval == TRUE){
 

@@ -116,7 +116,7 @@
             </div>
             <div class="col-sm-12">
                     <button type="submit" class="btn btn-primary">Add Project</button>
-                    <button type="button" class="btn btn-link"><a href="{{ urlFor('student.existing_project') }}">Add on existing project</a></button>
+                    <!-- <button type="button" class="btn btn-link"><a href="{{ urlFor('student.existing_project') }}">Add on existing project</a></button> -->
                     <input type="hidden" name="{{ csrf_key }}" value="{{ csrf_token }}">   
                 </div>
         </fieldset>

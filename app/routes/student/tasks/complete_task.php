@@ -92,114 +92,124 @@ $app->post('/student/tasks/complete_task/:id', $student(), function($task_id) us
 
 		if($v->passes()){
 
-			// check if file and comments already exist in database
-			$query2 = "SELECT file_name, student_comments FROM tasks WHERE task_id=$task_id AND file_name='$file_name' AND student_comments='$student_comments'"; 
-			$check = DB::select(DB::raw($query2));
+			//check if the project is completed
+			$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+			$project_complete = DB::select(DB::raw($prc));
 
-			if(count($check) > 0){
+			if(count($project_complete) > 0){
 				//flash message and redirect
-				$app->flash('error', 'This file and set of comments has already been added to the system.');
+				$app->flash('warning', 'This project has already been completed.');
 				return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
-			}elseif(count($check) == 0){
+			}else{
+				// check if file and comments already exist in database
+				$query2 = "SELECT file_name, student_comments FROM tasks WHERE task_id=$task_id AND file_name='$file_name' AND student_comments='$student_comments'"; 
+				$check = DB::select(DB::raw($query2));
+
+				if(count($check) > 0){
+					//flash message and redirect
+					$app->flash('error', 'This file and set of comments has already been added to the system.');
+					return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
+				}elseif(count($check) == 0){
 
 
-				$file = $_FILES['file_attachments'];
+					$file = $_FILES['file_attachments'];
 
-				$fileName = $file['name'];
-				$fileTmpName = $file['tmp_name'];
-				$fileSize = $file['size'];
-				$fileError = $file['error'];
-				$fileType = $file['type'];
+					$fileName = $file['name'];
+					$fileTmpName = $file['tmp_name'];
+					$fileSize = $file['size'];
+					$fileError = $file['error'];
+					$fileType = $file['type'];
 
-				//allowed files 
-				$fileExt = explode('.', $fileName);
-				$fileActualExt = strtolower(end($fileExt));
+					//allowed files 
+					$fileExt = explode('.', $fileName);
+					$fileActualExt = strtolower(end($fileExt));
 
-				$allowed = array('jpg', 'jpeg', 'png', 'pdf', 'docx', 'txt', 'pptx', 'zip', 'rar');
+					$allowed = array('jpg', 'jpeg', 'png', 'pdf', 'docx', 'txt', 'pptx', 'zip', 'rar');
 
-				if(in_array($fileActualExt, $allowed)){
+					if(in_array($fileActualExt, $allowed)){
 
-					// check for errors when uploading file
-					if($fileError === 0){
+						// check for errors when uploading file
+						if($fileError === 0){
 
-						//check for file size
-						if($fileSize < 60000000){
-							// get proper file name
-							$fileNameNew = uniqid('', true).".".$fileActualExt;
+							//check for file size
+							if($fileSize < 60000000){
+								// get proper file name
+								$fileNameNew = uniqid('', true).".".$fileActualExt;
 
-							//upload file to root folder
-							$fileDestination = $_SERVER['DOCUMENT_ROOT'].'/sprl_slim/uploads/tasks/'.$fileNameNew;
+								//upload file to root folder
+								$fileDestination = $_SERVER['DOCUMENT_ROOT'].'/sprl_slim/uploads/tasks/'.$fileNameNew;
 
-							// check if task is approved
-							$query3 = "SELECT is_completed, is_approved FROM tasks WHERE task_id=$task_id";
-							$checkApproval = DB::select(DB::raw($query3));
+								// check if task is approved
+								$query3 = "SELECT is_completed, is_approved FROM tasks WHERE task_id=$task_id";
+								$checkApproval = DB::select(DB::raw($query3));
 
-							foreach($checkApproval as $ca){
-								$is_completed = $ca->is_completed;
-								$is_approved = $ca->is_approved;
-							}
+								foreach($checkApproval as $ca){
+									$is_completed = $ca->is_completed;
+									$is_approved = $ca->is_approved;
+								}
 
-							if($is_approved == 1){
+								if($is_approved == 1){
 
-								if($is_completed == 1){
+									if($is_completed == 1){
+										// flash message and redirect
+										$app->flash('error', 'This task has already been completed');
+										return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
+									}else{
+										//upload file
+										move_uploaded_file($fileTmpName, $fileDestination);
+										
+								 		//update the projects table
+										Task::where('task_id', '=', $task_id)
+												->update([
+													'file_path' => $fileDestination,
+													'file_name' => $file_name,
+													'new_file_name' => $fileNameNew,
+													'student_comments' => $student_comments,
+													'sent_for_completion' => TRUE
+												]);
+
+										// send email to supervisor
+										// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
+
+								  //           $studentEmail = '';
+								  //           foreach ($student as $row) {
+								  //               $studentEmail = $row->email;
+								  //           }
+								  //           $message->to($studentEmail);
+								  //           $message->subject('Supervisor Assigned.');
+								  //       });
+
+										// flash message and redirect
+										$app->flash('success', 'Task has been successfully sent for approval of completion.');
+										return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
+									}
+
+								}elseif($is_approved == 0 || is_null($is_approved)){
 									// flash message and redirect
-									$app->flash('error', 'This task has already been completed');
-									return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
-								}else{
-									//upload file
-									move_uploaded_file($fileTmpName, $fileDestination);
-									
-							 		//update the projects table
-									Task::where('task_id', '=', $task_id)
-											->update([
-												'file_path' => $fileDestination,
-												'file_name' => $file_name,
-												'new_file_name' => $fileNameNew,
-												'student_comments' => $student_comments,
-												'sent_for_completion' => TRUE
-											]);
-
-									// send email to supervisor
-									// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
-
-							  //           $studentEmail = '';
-							  //           foreach ($student as $row) {
-							  //               $studentEmail = $row->email;
-							  //           }
-							  //           $message->to($studentEmail);
-							  //           $message->subject('Supervisor Assigned.');
-							  //       });
-
-									// flash message and redirect
-									$app->flash('success', 'Task has been successfully sent for approval of completion.');
+									$app->flash('error', 'Task has to be approved before it can be completed.');
 									return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
 								}
 
-							}elseif($is_approved == 0 || is_null($is_approved)){
+							}else{
 								// flash message and redirect
-								$app->flash('error', 'Task has to be approved before it can be completed.');
+								$app->flash('error', 'Your file is too large. Only files below 50mb are allowed');
 								return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
 							}
-
 						}else{
 							// flash message and redirect
-							$app->flash('error', 'Your file is too large. Only files below 50mb are allowed');
+							$app->flash('error', 'There was an error uploading your file!');
 							return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
 						}
-					}else{
+
+					} else{
+
 						// flash message and redirect
-						$app->flash('error', 'There was an error uploading your file!');
+						$app->flash('error', 'Files of this type are not allowed. Please attach a file');
 						return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
+
 					}
 
-				} else{
-
-					// flash message and redirect
-					$app->flash('error', 'Files of this type are not allowed. Please attach a file');
-					return $app->response->redirect($app->urlFor('student.complete_task',array('id' => $task_id)));
-
 				}
-
 			}
 
 		}

@@ -122,7 +122,11 @@
                                             <td>{{ ts.scheduled_date|date("d-M-Y") }}</td>
                                             <td>{{ ts.task_description }}</td>
                                             <td>
-                                               <a href="/sprl_slim/uploads/tasks/{{ ts.new_file_name }}"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i> {{ ts.file_name }}</a> 
+                                               {% if ts.file_name is empty %}
+                                                    <p style="color: grey;"><b>* no file attached</b></p>
+                                                {% else %}
+                                                    <a href="/sprl_slim/uploads/tasks/{{ ts.new_file_name }}"><i aria-hidden="true" class="glyphicon  glyphicon-file"></i> {{ ts.file_name }}</a> 
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% endfor %}    

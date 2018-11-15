@@ -111,22 +111,46 @@ $app->post('/student/tasks/add_supervisory_meeting', $student(), function() use(
 		//scheduled date
 		$scheduledDate = strtotime($scheduled_date);
 
-		if($scheduledDate > $currentDate){
-			//flash message and redirect
-			$app->flash('error', 'Duration cannot be added before the supervisory meeting date.');
-			return $app->response->redirect($app->urlFor('student.add_supervisory_meeting'));
-		}elseif($scheduledDate <= $currentDate){
+		//check if the project is completed
+		$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+		$project_complete = DB::select(DB::raw($prc));
 
-			//insert supervisory record in database
-			DB::table('supervisory_meetings')
-				->insert([
-					'scheduled_meeting_id' => $scheduled_meeting,
-					'duration' => $duration
-				]);
-
+		if(count($project_complete) > 0){
 			//flash message and redirect
-			$app->flash('success', 'Supervisory meeting has been successfully added.');
+			$app->flash('warning', 'This project has already been completed.');
 			return $app->response->redirect($app->urlFor('student.add_supervisory_meeting'));
+		}else{
+			// check if project has been added to the system
+			$pr = "SELECT project_id FROM `students` WHERE user_id=$user_id";
+			$pro = DB::select(DB::raw($pr));
+
+			foreach($pro as $p){
+				$pro_id = $p->project_id;
+			}
+
+			if(is_null($pro_id)){
+				//flash message and redirect
+				$app->flash('error', 'You must add your project to the system before performing this function');
+				return $app->response->redirect($app->urlFor('student.add_supervisory_meeting'));
+			}else{
+				if($scheduledDate > $currentDate){
+					//flash message and redirect
+					$app->flash('error', 'Duration cannot be added before the supervisory meeting date.');
+					return $app->response->redirect($app->urlFor('student.add_supervisory_meeting'));
+				}elseif($scheduledDate <= $currentDate){
+
+					//insert supervisory record in database
+					DB::table('supervisory_meetings')
+						->insert([
+							'scheduled_meeting_id' => $scheduled_meeting,
+							'duration' => $duration
+						]);
+
+					//flash message and redirect
+					$app->flash('success', 'Supervisory meeting has been successfully added.');
+					return $app->response->redirect($app->urlFor('student.add_supervisory_meeting'));
+				}
+			}
 		}
 
 	}

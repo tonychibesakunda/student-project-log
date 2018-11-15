@@ -88,15 +88,37 @@ $app->post('/student/myproject/edit_project_objective/:id', $student(), function
 
 		if($v->passes()){
 
-			//update the projects table
-			ProjectObjective::where('po_id', '=', $po_id)
-								->update([
-									'project_objective' => $project_objective
-								]);
+			//check if the project is completed
+			$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+			$project_complete = DB::select(DB::raw($prc));
 
-			//flash message and redirect
-			$app->flash('success', 'Project Objective has been successfully updated.');
-			return $app->response->redirect($app->urlFor('student.edit_project_objective',array('id' => $po_id)));
+			if(count($project_complete) > 0){
+				//flash message and redirect
+				$app->flash('warning', 'This project has already been completed.');
+				return $app->response->redirect($app->urlFor('student.edit_project_objective',array('id' => $po_id)));
+			}else{
+				//update the projects table
+				ProjectObjective::where('po_id', '=', $po_id)
+									->update([
+										'project_objective' => $project_objective
+									]);
+
+				// Send email to supervisor
+		        $app->mail->send('email/project_objectives/edited_project_objective.php', ['student' => $student, 'supervisors' => $supervisors, 'project_objectives' => $project_objectives], function($message) use($supervisors){
+
+		            $supervisor_email = '';
+		            //get supervisor email
+					foreach ($supervisors as $sup) {
+							$supervisor_email = $sup->suEmail;
+						}
+		            $message->to($supervisor_email);
+		            $message->subject('Approve Project Objective.');
+		        });
+
+				//flash message and redirect
+				$app->flash('success', 'Project Objective has been successfully updated.');
+				return $app->response->redirect($app->urlFor('student.edit_project_objective',array('id' => $po_id)));
+			}
 			
 		}
 

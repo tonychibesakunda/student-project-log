@@ -127,60 +127,70 @@ $app->post('/student/schedules/edit_scheduled_meeting/:id', $student(), function
 
 		if($v->passes()){
 
-			//get supervision id
-			$get_spid = "SELECT supervision_id FROM supervisions WHERE student_id=$student_id AND supervisor_id=$select_supervisor";
-			$sp_id = DB::select(DB::raw($get_spid));
+			//check if the project is completed
+			$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+			$project_complete = DB::select(DB::raw($prc));
 
-			foreach ($sp_id as $sp) {
-				$sp_id = $sp->supervision_id;
-			}
-
-			//get project start date and end date
-			$getDates = "SELECT project_start_date, project_end_date FROM students WHERE student_id=$student_id AND user_id=$user_id";
-			$dates = DB::select(DB::raw($getDates));
-
-			foreach ($dates as $dt) {
-				$project_start_date = $dt->project_start_date;
-				$project_end_date = $dt->project_end_date;
-			}
-
-			$startdate = strtotime($project_start_date);
-			$enddate = strtotime($project_end_date);
-			$scheduledDate = strtotime($scheduled_date);
-			$currentDate = strtotime(date('Y-m-d'));
-
-			if($scheduledDate < $startdate || $scheduledDate > $enddate){
+			if(count($project_complete) > 0){
 				//flash message and redirect
-				$app->flash('error', 'Scheduled date has to be within the project start date and end date.');
-				return $app->response->redirect($app->urlFor('student.edit_scheduled_meeting',array('id' => $sm_id)));
-			}elseif($scheduledDate < $currentDate){
-				//flash message and redirect
-				$app->flash('error', 'Scheduled date cannot be set before the current date.');
+				$app->flash('warning', 'This project has already been completed.');
 				return $app->response->redirect($app->urlFor('student.edit_scheduled_meeting',array('id' => $sm_id)));
 			}else{
+				//get supervision id
+				$get_spid = "SELECT supervision_id FROM supervisions WHERE student_id=$student_id AND supervisor_id=$select_supervisor";
+				$sp_id = DB::select(DB::raw($get_spid));
 
-				//update scheduled record in database
-				ScheduledMeeting::where('scheduled_meeting_id', '=', $sm_id)
-					->update([
-						'scheduled_date' => $scheduled_date
-					]);
+				foreach ($sp_id as $sp) {
+					$sp_id = $sp->supervision_id;
+				}
 
-				// Send email to supervisor
-		        /*$app->mail->send('email/scheduled_meeting/edited_scheduled_meeting.php', ['student' => $student, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
+				//get project start date and end date
+				$getDates = "SELECT project_start_date, project_end_date FROM students WHERE student_id=$student_id AND user_id=$user_id";
+				$dates = DB::select(DB::raw($getDates));
 
-		            $supervisor_email = '';
-		            //get supervisor email
-					foreach ($supervisors as $sup) {
-							$supervisor_email = $sup->suEmail;
-						}
-		            $message->to($supervisor_email);
-		            $message->subject('Scheduled Date Edited.');
-		        });*/
-				
-				//flash message and redirect
-				$app->flash('success', 'Scheduled date has been successfully updated.');
-				return $app->response->redirect($app->urlFor('student.edit_scheduled_meeting',array('id' => $sm_id)));
-			}	
+				foreach ($dates as $dt) {
+					$project_start_date = $dt->project_start_date;
+					$project_end_date = $dt->project_end_date;
+				}
+
+				$startdate = strtotime($project_start_date);
+				$enddate = strtotime($project_end_date);
+				$scheduledDate = strtotime($scheduled_date);
+				$currentDate = strtotime(date('Y-m-d'));
+
+				if($scheduledDate < $startdate || $scheduledDate > $enddate){
+					//flash message and redirect
+					$app->flash('error', 'Scheduled date has to be within the project start date and end date.');
+					return $app->response->redirect($app->urlFor('student.edit_scheduled_meeting',array('id' => $sm_id)));
+				}elseif($scheduledDate < $currentDate){
+					//flash message and redirect
+					$app->flash('error', 'Scheduled date cannot be set before the current date.');
+					return $app->response->redirect($app->urlFor('student.edit_scheduled_meeting',array('id' => $sm_id)));
+				}else{
+
+					//update scheduled record in database
+					ScheduledMeeting::where('scheduled_meeting_id', '=', $sm_id)
+						->update([
+							'scheduled_date' => $scheduled_date
+						]);
+
+					// Send email to supervisor
+			        /*$app->mail->send('email/scheduled_meeting/edited_scheduled_meeting.php', ['student' => $student, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
+
+			            $supervisor_email = '';
+			            //get supervisor email
+						foreach ($supervisors as $sup) {
+								$supervisor_email = $sup->suEmail;
+							}
+			            $message->to($supervisor_email);
+			            $message->subject('Scheduled Date Edited.');
+			        });*/
+					
+					//flash message and redirect
+					$app->flash('success', 'Scheduled date has been successfully updated.');
+					return $app->response->redirect($app->urlFor('student.edit_scheduled_meeting',array('id' => $sm_id)));
+				}
+			}			
 			
 		}
 

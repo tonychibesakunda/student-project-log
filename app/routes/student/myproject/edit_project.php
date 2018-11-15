@@ -59,51 +59,62 @@ $app->post('/student/myproject/edit_project/:id', $student(), function($projectI
 		$v->validate([
 			'project_name' => [$project_name, 'required|alnumDash|max(250)'],
 			'project_category' => [$project_category, 'int'],
-			'project_description' => [$project_description, 'required|alnumDash'],
+			'project_description' => [$project_description, 'required'],
 			'project_start_date' => [$project_start_date, 'required|date'],
 			'project_end_date' => [$project_end_date, 'required|date'],
 			'project_type' => [$project_type, 'int'],
-			'project_aim' => [$project_aim, 'required|alnumDash']
+			'project_aim' => [$project_aim, 'required']
 		]);
 
 		if($v->passes()){
 
-			$startdate = strtotime($project_start_date);
-			$enddate = strtotime($project_end_date);
+			//check if the project is completed
+			$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+			$project_complete = DB::select(DB::raw($prc));
 
-			if($startdate == $enddate){
-				$app->flash('error', 'start date cannot be the same as the end date.');
-				return $app->response->redirect($app->urlFor('student.edit_project',array('id' => $projectId)));
-			}
+			if(count($project_complete) > 0){
+				$app->flash('warning', 'This project has already been completed.');
+				return $app->response->redirect($app->urlFor('student.edit_project',array('id' => $projectId)));	
+			}else{
+				$startdate = strtotime($project_start_date);
+				$enddate = strtotime($project_end_date);
 
-			if($startdate > $enddate){
-				$app->flash('error', 'start date cannot be higher than the end date.');
-				return $app->response->redirect($app->urlFor('student.edit_project',array('id' => $projectId)));
-			}
+				if($startdate == $enddate){
+					$app->flash('error', 'start date cannot be the same as the end date.');
+					return $app->response->redirect($app->urlFor('student.edit_project',array('id' => $projectId)));
+				}
 
-			if($startdate < $enddate){
-				
-				//update the projects table
-				Project::where('project_id', '=', $projectId)
-						->update([
-							'project_name' => $project_name,
-							'project_description' => $project_description,
-							'project_cat_id' => $project_category,
-							'project_type_id' => $project_type
-						]);
+				if($startdate > $enddate){
+					$app->flash('error', 'start date cannot be higher than the end date.');
+					return $app->response->redirect($app->urlFor('student.edit_project',array('id' => $projectId)));
+				}
 
-
-				//update the students table
-				Student::where('user_id', '=', $user_id)
+				if($startdate < $enddate){
+					
+					//update the projects table
+					Project::where('project_id', '=', $projectId)
 							->update([
-								'project_start_date' => $project_start_date,
-								'project_end_date' => $project_end_date,
-								'project_aims' => $project_aim
+								'project_name' => $project_name,
+								'project_description' => $project_description,
+								'project_cat_id' => $project_category,
+								'project_type_id' => $project_type
 							]);
 
-				$app->flash('success', 'Your project details have been successfully updated.');
-				return $app->response->redirect($app->urlFor('student.edit_project',array('id' => $projectId)));
+
+					//update the students table
+					Student::where('user_id', '=', $user_id)
+								->update([
+									'project_start_date' => $project_start_date,
+									'project_end_date' => $project_end_date,
+									'project_aims' => $project_aim
+								]);
+
+					$app->flash('success', 'Your project details have been successfully updated.');
+					return $app->response->redirect($app->urlFor('student.edit_project',array('id' => $projectId)));
+				}
 			}
+
+			
 
 		}
 

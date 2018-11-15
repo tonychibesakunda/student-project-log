@@ -124,23 +124,35 @@ $app->post('/student/tasks/edit_supervisory_meeting/:id', $student(), function($
 			//scheduled date
 			$scheduledDate = strtotime($scheduled_date);
 
-			if($scheduledDate > $currentDate){
-				//flash message and redirect
-				$app->flash('error', 'Duration cannot be added before the supervisory meeting date.');
-				return $app->response->redirect($app->urlFor('student.edit_supervisory_meeting', array('id' => $sm_id)));
-			}elseif($scheduledDate <= $currentDate){
+			//check if the project is completed
+			$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+			$project_complete = DB::select(DB::raw($prc));
 
-				//update scheduled record in database
-				SupervisoryMeeting::where('supervisory_meeting_id', '=', $sm_id)
-								->update([
-									'scheduled_meeting_id' => $scheduled_meeting,
-									'duration' => $duration
-								]);
-
+			if(count($project_complete) > 0){
 				//flash message and redirect
-				$app->flash('success', 'Supervisory meeting has been successfully updated.');
+				$app->flash('warning', 'This project has already been completed.');
 				return $app->response->redirect($app->urlFor('student.edit_supervisory_meeting', array('id' => $sm_id)));
+			}else{
+				if($scheduledDate > $currentDate){
+					//flash message and redirect
+					$app->flash('error', 'Duration cannot be added before the supervisory meeting date.');
+					return $app->response->redirect($app->urlFor('student.edit_supervisory_meeting', array('id' => $sm_id)));
+				}elseif($scheduledDate <= $currentDate){
+
+					//update scheduled record in database
+					SupervisoryMeeting::where('supervisory_meeting_id', '=', $sm_id)
+									->update([
+										'scheduled_meeting_id' => $scheduled_meeting,
+										'duration' => $duration
+									]);
+
+					//flash message and redirect
+					$app->flash('success', 'Supervisory meeting has been successfully updated.');
+					return $app->response->redirect($app->urlFor('student.edit_supervisory_meeting', array('id' => $sm_id)));
+				}
 			}
+
+			
 
 		}
 

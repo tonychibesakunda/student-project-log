@@ -58,7 +58,7 @@
                             <tbody>
                                 {% if project_objectives is empty %}
                                     <tr>
-                                        <td colspan="3"><h4 style="text-align: center; color: gray;">no project objectives have been added to the system!</h4></td>
+                                        <td colspan="5"><h4 style="text-align: center; color: gray;">no project objectives have been added to the system!</h4></td>
                                     </tr>
                                 {% else %}
                                 {% for po in project_objectives %}

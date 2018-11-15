@@ -125,38 +125,62 @@ $app->post('/student/schedules/add_scheduled_meeting', $student(), function() us
 			$scheduledDate = strtotime($scheduled_date);
 			$currentDate = strtotime(date('Y-m-d'));
 
-			if($scheduledDate < $startdate || $scheduledDate > $enddate){
+			//check if the project is completed
+			$prc = "SELECT is_final_project_report_approved FROM students WHERE user_id=$user_id AND is_final_project_report_approved=1";
+			$project_complete = DB::select(DB::raw($prc));
+
+			if(count($project_complete) > 0){
 				//flash message and redirect
-				$app->flash('error', 'Scheduled date has to be within the project start date and end date.');
-				return $app->response->redirect($app->urlFor('student.add_scheduled_meeting'));
-			}elseif($scheduledDate < $currentDate){
-				//flash message and redirect
-				$app->flash('error', 'Scheduled date cannot be set before the current date.');
+				$app->flash('warning', 'This project has already been completed.');
 				return $app->response->redirect($app->urlFor('student.add_scheduled_meeting'));
 			}else{
-				//insert scheduled record in database
-				DB::table('scheduled_meetings')
-					->insert([
-						'supervision_id' => $sp_id,
-						'scheduled_date' => $scheduled_date
-					]);
+				// check if project has been added to the system
+				$pr = "SELECT project_id FROM `students` WHERE user_id=$user_id";
+				$pro = DB::select(DB::raw($pr));
 
-				// Send email to supervisor
-		        $app->mail->send('email/scheduled_meeting/scheduled_meeting.php', ['student' => $student, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
+				foreach($pro as $p){
+					$pro_id = $p->project_id;
+				}
 
-		            $supervisor_email = '';
-		            //get supervisor email
-					foreach ($supervisors as $sup) {
-							$supervisor_email = $sup->suEmail;
-						}
-		            $message->to($supervisor_email);
-		            $message->subject('Scheduled Date Added.');
-		        });
-				
-				//flash message and redirect
-				$app->flash('success', 'Scheduled date has been successfully added.');
-				return $app->response->redirect($app->urlFor('student.add_scheduled_meeting'));
-			}	
+				if(is_null($pro_id)){
+					//flash message and redirect
+					$app->flash('error', 'You must add your project to the system before performing this function');
+					return $app->response->redirect($app->urlFor('student.add_scheduled_meeting'));
+				}else{
+					if($scheduledDate < $startdate || $scheduledDate > $enddate){
+						//flash message and redirect
+						$app->flash('error', 'Scheduled date has to be within the project start date and end date.');
+						return $app->response->redirect($app->urlFor('student.add_scheduled_meeting'));
+					}elseif($scheduledDate < $currentDate){
+						//flash message and redirect
+						$app->flash('error', 'Scheduled date cannot be set before the current date.');
+						return $app->response->redirect($app->urlFor('student.add_scheduled_meeting'));
+					}else{
+						//insert scheduled record in database
+						DB::table('scheduled_meetings')
+							->insert([
+								'supervision_id' => $sp_id,
+								'scheduled_date' => $scheduled_date
+							]);
+
+						// Send email to supervisor
+				        $app->mail->send('email/scheduled_meeting/scheduled_meeting.php', ['student' => $student, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
+
+				            $supervisor_email = '';
+				            //get supervisor email
+							foreach ($supervisors as $sup) {
+									$supervisor_email = $sup->suEmail;
+								}
+				            $message->to($supervisor_email);
+				            $message->subject('Scheduled Date Added.');
+				        });
+						
+						//flash message and redirect
+						$app->flash('success', 'Scheduled date has been successfully added.');
+						return $app->response->redirect($app->urlFor('student.add_scheduled_meeting'));
+					}
+				}
+			}				
 			
 		}
 

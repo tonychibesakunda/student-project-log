@@ -108,6 +108,12 @@ class Validator extends Violin{
 			'supervisor_comments' => [
 				'required' => 'Comments are required',
 				'min' => 'Comments must be a minimum of 4 characters'
+			],
+			'search_project_name' => [
+				'required' => 'You need to enter project name, student name or year'
+			],
+			'search_project_category' => [
+				'int' => 'You need to select a project category'
 			]
 		]);
 
