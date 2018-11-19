@@ -55,12 +55,16 @@ $app->post('/student/tasks/edit_task/:id', $student(), function($task_id) use($a
 		$is_completed = '';
 
 		//get student id
-		$get_id =  "SELECT student_id FROM students WHERE user_id=$user_id";
+		$get_id =  "SELECT students.student_id, users.* FROM students INNER JOIN users ON students.user_id=users.id WHERE user_id=$user_id";
 		$sid = DB::select(DB::raw($get_id));
 
 		foreach ($sid as $row) {
 			$student_id = $row->student_id;
 		}
+
+		//get assigned supervisors
+		$sup = "SELECT supervisions.*, (SELECT users.first_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suFName, (SELECT users.other_names FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suONames, (SELECT users.last_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suLName, (SELECT users.email FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suEmail FROM supervisions WHERE student_id=$student_id";
+		$supervisors = DB::select(DB::raw($sup));
 
 		//get supervision id
 		$get_spid = "SELECT supervision_id FROM supervisions WHERE student_id=$student_id";
@@ -134,16 +138,20 @@ $app->post('/student/tasks/edit_task/:id', $student(), function($task_id) use($a
 									'task_description' => $task
 								]);
 
-						// send email to supervisor
-						// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
+						$ts = "SELECT task_description FROM tasks WHERE task_id=$task_id";
+						$updated_task = DB::select(DB::raw($ts));
 
-				  //           $studentEmail = '';
-				  //           foreach ($student as $row) {
-				  //               $studentEmail = $row->email;
-				  //           }
-				  //           $message->to($studentEmail);
-				  //           $message->subject('Supervisor Assigned.');
-				  //       });
+						// send email to supervisor
+						$app->mail->send('email/tasks/edit_task.php', ['student' => $sid, 'supervisors' => $supervisors, 'updated_task' => $updated_task, 'tasks' => $tasks], function($message) use($supervisors){
+
+				            $supervisor_email = '';
+				            //get supervisor email
+							foreach ($supervisors as $sup) {
+									$supervisor_email = $sup->suEmail;
+								}
+				            $message->to($supervisor_email);
+				            $message->subject('Approve Edited Student Task.');
+				        });
 
 						//flash message and redirect
 						$app->flash('success', 'Task has been successfully updated to your log and has also been sent for approval.');

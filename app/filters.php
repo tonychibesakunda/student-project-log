@@ -30,6 +30,8 @@ $guest = function() use ($authenticationCheck){
 $coordinator = function() use ($app){
 	return function() use ($app){
 		if(!$app->auth || !$app->auth->isCoordinator()){
+			//flash message and redirect
+			$app->flash('warning', 'Please ensure that you log in first.');
 			$app->redirect($app->urlFor('login'));
 		}
 	};
@@ -39,6 +41,8 @@ $coordinator = function() use ($app){
 $hod = function() use ($app){
 	return function() use ($app){
 		if(!$app->auth || !$app->auth->isHod()){
+			//flash message and redirect
+			$app->flash('warning', 'Please ensure that you log in first.');
 			$app->redirect($app->urlFor('login'));
 		}
 	};
@@ -48,6 +52,8 @@ $hod = function() use ($app){
 $supervisor = function() use ($app){
 	return function() use ($app){
 		if(!$app->auth || !$app->auth->isSupervisor()){
+			//flash message and redirect
+			$app->flash('warning', 'Please ensure that you log in first.');
 			$app->redirect($app->urlFor('login'));
 		}
 	};
@@ -57,6 +63,8 @@ $supervisor = function() use ($app){
 $student = function() use ($app){
 	return function() use ($app){
 		if(!$app->auth || !$app->auth->isStudent()){
+			//flash message and redirect
+			$app->flash('warning', 'Please ensure that you log in first.');
 			$app->redirect($app->urlFor('login'));
 		}
 	};

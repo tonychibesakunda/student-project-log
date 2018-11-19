@@ -5,7 +5,8 @@ HOD: -> username: hod
      -> password: 12345678
 Project Coordinator: -> username: projectCoordinator
                      -> password: 12345678
-Student: -> username: 1234
+Students: -> username: 1234
          -> password: 12345678
+
 Supervisor: -> username: 16
             -> password: 12345678

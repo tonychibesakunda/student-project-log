@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 15, 2018 at 04:16 PM
+-- Generation Time: Nov 19, 2018 at 09:42 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -153,7 +153,7 @@ INSERT INTO `project_objectives` (`po_id`, `student_id`, `project_objective`, `i
 (12, 9, 'New Objective', 1, 1, 'What is this? Please remove it', NULL, '2018-10-30 08:07:25'),
 (13, 9, 'Complete Methodology', 0, 1, NULL, NULL, '2018-10-27 16:48:02'),
 (14, 8, 'Gather Requirements', 0, 1, NULL, NULL, '2018-11-14 13:12:26'),
-(15, 8, 'Analyze requirements', 0, 1, NULL, NULL, '2018-11-14 13:11:12');
+(15, 8, 'Analyze requirements', 0, 1, NULL, NULL, '2018-11-19 08:21:08');
 
 -- --------------------------------------------------------
 
@@ -202,7 +202,8 @@ INSERT INTO `scheduled_meetings` (`scheduled_meeting_id`, `supervision_id`, `sch
 (20, 64, '2018-10-08 00:00:00', NULL, NULL),
 (21, 65, '2018-10-25 00:00:00', NULL, NULL),
 (22, 65, '2018-10-30 00:00:00', NULL, NULL),
-(23, 64, '2018-11-02 00:00:00', NULL, NULL);
+(23, 64, '2018-11-02 00:00:00', NULL, NULL),
+(24, 65, '2018-11-23 00:00:00', NULL, '2018-11-19 11:05:49');
 
 -- --------------------------------------------------------
 
@@ -255,7 +256,7 @@ CREATE TABLE `students` (
 INSERT INTO `students` (`student_id`, `user_id`, `student_cat_id`, `project_id`, `project_start_date`, `project_end_date`, `project_aims`, `final_project_report_file_path`, `final_project_report_file_name`, `final_project_report_new_file_name`, `is_final_project_report_approved`, `supervisor_comments`, `created_at`, `updated_at`) VALUES
 (6, 54, NULL, 4, '2018-09-20 00:00:00', '2018-10-26 00:00:00', 'Develop web system to achieve this\r\n', NULL, NULL, NULL, NULL, NULL, '2018-11-05 05:20:58', '2018-09-20 14:57:51'),
 (7, 56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2018-10-25 09:47:22', '2018-09-17 10:05:14'),
-(8, 58, NULL, 6, '2018-07-04 00:00:00', '2018-12-14 00:00:00', 'Develop system that automatically generates a time table', NULL, NULL, NULL, NULL, NULL, '2018-11-14 13:01:41', '2018-11-14 11:45:20'),
+(8, 58, NULL, 6, '2018-07-04 00:00:00', '2018-12-14 00:00:00', 'Develop system that automatically generates a time table', NULL, NULL, NULL, NULL, NULL, '2018-11-19 10:36:31', '2018-11-19 09:34:41'),
 (9, 59, NULL, 3, '2018-09-20 00:00:00', '2018-12-15 00:00:00', 'Develop a web based student project log\r\n', 'C:/xampp/htdocs/sprl_slim/uploads/project_reports/5bced11b1d25d6.02830254.pdf', 'CSC 4630 ASSIGNMENT 4.pdf', '5bced11b1d25d6.02830254.pdf', 1, 'Great effort on your report ', '2018-11-14 11:42:59', '2018-11-14 10:42:59'),
 (10, 60, NULL, 5, '2018-08-18 00:00:00', '2019-05-03 00:00:00', '1_To Teach Ben a Lesson \r\n2_To Show Mukwa that he knows nothing.    ', NULL, NULL, NULL, 1, NULL, '2018-11-13 10:44:34', '2018-11-05 14:14:52');
 
@@ -404,7 +405,9 @@ INSERT INTO `tasks` (`task_id`, `supervisory_meeting_id`, `task_description`, `s
 (6, 11, 'Develop Methodology and Introduction', 1, 1, 1, 1, 'C:/xampp/htdocs/sprl_slim/uploads/tasks/5bd8216a84f141.46159160.docx', 'CSC_4631_Assignment_1.docx', '5bd8216a84f141.46159160.docx', 'Am done with this', 'Add Introduction as well', NULL, '2018-10-30 09:17:05', '2018-10-30 08:17:05'),
 (7, 7, 'Student Module', 1, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2018-11-05 22:00:58', '0000-00-00 00:00:00'),
 (8, 7, 'Coordinator Module', 1, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2018-11-05 22:01:27', '0000-00-00 00:00:00'),
-(9, 7, 'HOD Module', 1, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2018-11-05 22:01:37', '0000-00-00 00:00:00');
+(9, 7, 'HOD Module', 1, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2018-11-05 22:01:37', '0000-00-00 00:00:00'),
+(11, 9, 'Testing Task', 1, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2018-11-19 12:32:54', '0000-00-00 00:00:00'),
+(12, 9, 'Testing Task 2', 1, 1, 1, 0, 'C:/xampp/htdocs/sprl_slim/uploads/tasks/5bf2b714dfd766.39447093.txt', 'Addresses.txt', '5bf2b714dfd766.39447093.txt', 'Testing ongoing  ', NULL, NULL, '2018-11-19 13:13:56', '2018-11-19 12:13:56');
 
 -- --------------------------------------------------------
 
@@ -435,14 +438,14 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `other_names`, `email`, `password`, `photo`, `active`, `active_hash`, `recover_hash`, `remember_identifier`, `remember_token`, `created_at`, `updated_at`) VALUES
-(34, 'hod', NULL, NULL, NULL, 'tonymulenga214.tc@gmail.com', '$2y$10$Is3Wf9g8VJVoS8biY.mgbeWvPh7Glq6ky/WtrTdpE6bzmrJh3nMRu', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-15 09:35:00', '2018-11-15 08:35:00'),
-(48, 'projectCoordinator', NULL, NULL, NULL, 'tonymchibesakunda@gmail.com', '$2y$10$pZQTfYVdjwxHBM/ZHecLOOttDYAi9p0a6G9HYU8Q5XJ24XfWg0y3u', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-15 09:48:09', '2018-11-15 08:48:09'),
+(34, 'hod', NULL, NULL, NULL, 'tonymulenga214.tc@gmail.com', '$2y$10$Is3Wf9g8VJVoS8biY.mgbeWvPh7Glq6ky/WtrTdpE6bzmrJh3nMRu', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-19 20:08:47', '2018-11-19 19:08:47'),
+(48, 'projectCoordinator', NULL, NULL, NULL, 'tonymchibesakunda@gmail.com', '$2y$10$pZQTfYVdjwxHBM/ZHecLOOttDYAi9p0a6G9HYU8Q5XJ24XfWg0y3u', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-17 03:38:51', '2018-11-17 02:38:51'),
 (54, '15', 'Musonda', 'Lombe', 'Denning', 'denninglombe1@gmail.com', '$2y$10$a1zlBFeBOesk5PnUazo0Te.x3zbsZ6K4QKiyoGM948JF/6RfIPN7S', NULL, 1, NULL, NULL, NULL, NULL, '2018-10-08 13:28:10', '2018-10-08 13:28:10'),
-(55, '16', 'Mofya', 'Phiri', '', 'tonyyung21@gmail.com', '$2y$10$EH7wB/2NcII0v1LQaUvlfur7UdSFRbfBqJkeNVe1gnb0gTyYWEfzW', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-15 09:56:33', '2018-11-15 08:56:33'),
+(55, '16', 'Mofya', 'Phiri', '', 'tonyyung21@gmail.com', '$2y$10$EH7wB/2NcII0v1LQaUvlfur7UdSFRbfBqJkeNVe1gnb0gTyYWEfzW', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-19 14:04:48', '2018-11-19 13:04:48'),
 (56, '14029049', 'Reuben', 'Shumba', '', 'shumbareuben@gmail.com', '$2y$10$CvZR4FouMXukLDBpkYaDOOSAyqxdFM2iB2/L6f5lAyc2My93Djkj2', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-01 19:56:07', '2018-11-01 18:56:07'),
 (57, 'hg', 'Tony', 'Chibesakunda', '', 's@dfd.hj', '$2y$10$CvZR4FouMXukLDBpkYaDOOSAyqxdFM2iB2/L6f5lAyc2My93Djkj2', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-11 16:04:19', '2018-11-11 15:04:19'),
-(58, '17', 'Chipo', 'Mwandila', '', 'cs@xs.zx', '$2y$10$3WL/2DnCjhUra0c4v8.Leekd5hMt0ZU/nlVXXLMKZiWLTJp/iKQa.', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-14 21:03:29', '2018-11-14 20:03:29'),
-(59, '1234', 'Tony', 'Mulenga', '', 't.chibesakunda@yahoo.com', '$2y$10$ZtegbDBCvj.McSENuplpWeN95nf9Rmxi3yJDXQRb8NtyeI93Favwm', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-15 12:11:40', '2018-11-15 11:11:40'),
+(58, '17', 'Chipo', 'Mwandila', '', 'cs@xs.zx', '$2y$10$3WL/2DnCjhUra0c4v8.Leekd5hMt0ZU/nlVXXLMKZiWLTJp/iKQa.', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-19 14:00:05', '2018-11-19 13:00:05'),
+(59, '1234', 'Tony', 'Mulenga', '', 't.chibesakunda@yahoo.com', '$2y$10$ZtegbDBCvj.McSENuplpWeN95nf9Rmxi3yJDXQRb8NtyeI93Favwm', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-19 20:07:34', '2018-11-19 19:07:34'),
 (60, '14021986', 'Nkumbula', 'Mutale', '', 'mutalenk@gmail.com', '$2y$10$lZXjmNWjmx4N2c2zBQJF8e4i/T1biMnd74J0AAvAN1cxMc.4.idzi', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-11 17:36:51', '2018-11-11 16:36:51'),
 (61, '14103095', 'Brian ', 'Mhongo', '', 'kukenamh@gmail.com', '$2y$10$VYKzAyg4Rcl9Rh5wusMFP.CHv1fMvlD/k6iehcPa.H2V4iIbIKYOC', NULL, 1, NULL, NULL, NULL, NULL, '2018-11-11 17:38:08', '2018-11-11 16:38:08');
 
@@ -641,7 +644,7 @@ ALTER TABLE `project_types`
 -- AUTO_INCREMENT for table `scheduled_meetings`
 --
 ALTER TABLE `scheduled_meetings`
-  MODIFY `scheduled_meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `scheduled_meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT for table `schools`
 --
@@ -681,7 +684,7 @@ ALTER TABLE `supervisor_interests`
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT for table `users`
 --

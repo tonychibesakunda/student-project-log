@@ -24,7 +24,7 @@
                     <legend class="text-center">Project Details</legend>
 
                     <div class="col-sm-12">
-                      <button type="submit" class="btn btn-link"><a href="{{ urlFor('supervisor.student_projects') }}">&larr; Back</a></button>
+                      <button type="button" class="btn btn-link"><a href="{{ urlFor('supervisor.student_projects') }}">&larr; Back</a></button>
                     </div>
                     <div class=" col-sm-6">
                         <div class="panel panel-info">

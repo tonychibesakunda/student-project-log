@@ -36,18 +36,28 @@ $app->post('/student/myproject/add_project_report', $student(), function() use($
 		//student details
 		$user_id = $_SESSION[$app->config->get('auth.session')];
 		$student_id = '';
+		$file_path = '';
 
 		//get student id
-		$get_id =  "SELECT student_id FROM students WHERE user_id=$user_id";
+		$get_id =  "SELECT students.student_id, users.* FROM students INNER JOIN users ON students.user_id=users.id WHERE user_id=$user_id";
 		$sid = DB::select(DB::raw($get_id));
 
 		foreach ($sid as $row) {
 			$student_id = $row->student_id;
 		}
 
+		//get assigned supervisors
+		$sup = "SELECT supervisions.*, (SELECT users.first_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suFName, (SELECT users.other_names FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suONames, (SELECT users.last_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suLName, (SELECT users.email FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suEmail FROM supervisions WHERE student_id=$student_id";
+		$supervisors = DB::select(DB::raw($sup));
+
 		//get project report file and project report file name
 		$query = "SELECT * FROM students WHERE user_id=$user_id";
 		$project_report = DB::select(DB::raw($query));
+
+		foreach($project_report as $p){
+			//get file path
+			$file_path = $p->final_project_report_file_path;
+		}
 
 		$request = $app->request;
 
@@ -99,51 +109,148 @@ $app->post('/student/myproject/add_project_report', $student(), function() use($
 					$app->flash('warning', 'All your project objectives have to be approved before adding a report.');
 					return $app->response->redirect($app->urlFor('student.add_project_report'));
 				}else{
-					if(in_array($fileActualExt, $allowed)){
 
-						// check for errors when uploading file
-						if($fileError === 0){
+					// check if there is a file already uploaded
+					if(is_null($file_path)){
 
-							//check for file size
-							if($fileSize < 20000000){
-								// get proper file name
-								$fileNameNew = uniqid('', true).".".$fileActualExt;
+						if(in_array($fileActualExt, $allowed)){
 
-								//upload file to root folder
-								$fileDestination = $_SERVER['DOCUMENT_ROOT'].'/sprl_slim/uploads/project_reports/'.$fileNameNew;
+							// check for errors when uploading file
+							if($fileError === 0){
 
-								//upload file
-								move_uploaded_file($fileTmpName, $fileDestination);
-								//update records
-								Student::where('user_id', '=', $user_id)
-						 					->update([
-						 						'final_project_report_file_path' => $fileDestination,
-						 						'final_project_report_file_name' => $project_report_name,
-						 						'final_project_report_new_file_name' => $fileNameNew
-						 					]);
+								//check for file size
+								if($fileSize < 20000000){
+									// get proper file name
+									$fileNameNew = uniqid('', true).".".$fileActualExt;
 
-								// flash message and redirect
-								$app->flash('success', 'File successfully uploaded.');
-								return $app->response->redirect($app->urlFor('student.add_project_report'));
+									//upload file to root folder
+									$fileDestination = $_SERVER['DOCUMENT_ROOT'].'/sprl_slim/uploads/project_reports/'.$fileNameNew;
 
+									//upload file
+									move_uploaded_file($fileTmpName, $fileDestination);
+									//update records
+									Student::where('user_id', '=', $user_id)
+							 					->update([
+							 						'final_project_report_file_path' => $fileDestination,
+							 						'final_project_report_file_name' => $project_report_name,
+							 						'final_project_report_new_file_name' => $fileNameNew
+							 					]);
+
+							 		//get project report file and project report file name
+									$p_report = "SELECT * FROM students WHERE user_id=$user_id";
+									$project_report = DB::select(DB::raw($p_report));
+
+							 		// Send email to supervisor
+							        $app->mail->send('email/project_report/project_report.php', ['student' => $sid, 'supervisors' => $supervisors, 'project_report' => $project_report], function($message) use($supervisors){
+
+							            $supervisor_email = '';
+							            //get supervisor email
+										foreach ($supervisors as $sup) {
+												$supervisor_email = $sup->suEmail;
+											}
+							            $message->to($supervisor_email);
+							            $message->subject('Approve Project Report (Thesis).');
+							        });
+
+									// flash message and redirect
+									$app->flash('success', 'File successfully uploaded.');
+									return $app->response->redirect($app->urlFor('student.add_project_report'));
+
+								}else{
+									// flash message and redirect
+									$app->flash('error', 'Your file is too large. Only files below 20mb are allowed.');
+									return $app->response->redirect($app->urlFor('student.add_project_report'));
+								}
 							}else{
 								// flash message and redirect
-								$app->flash('error', 'Your file is too large. Only files below 20mb are allowed.');
+								$app->flash('error', 'There was an error uploading your file!');
 								return $app->response->redirect($app->urlFor('student.add_project_report'));
 							}
-						}else{
+
+						} else{
+
 							// flash message and redirect
-							$app->flash('error', 'There was an error uploading your file!');
+							$app->flash('error', 'Only pdf files are allowed, Please attach a pdf file.');
 							return $app->response->redirect($app->urlFor('student.add_project_report'));
+
 						}
 
-					} else{
+					}else{
+						// delete the already uploaded file first
+						unlink($file_path);
 
-						// flash message and redirect
-						$app->flash('error', 'Only pdf files are allowed, Please attach a pdf file.');
-						return $app->response->redirect($app->urlFor('student.add_project_report'));
+						// update table
+						Student::where('user_id', '=', $user_id)
+				 					->update([
+				 						'final_project_report_file_path' => NULL,
+				 						'final_project_report_file_name' => NULL,
+				 						'final_project_report_new_file_name' => NULL
+				 					]);
 
-					}	
+						// then upload new selected file
+						if(in_array($fileActualExt, $allowed)){
+
+							// check for errors when uploading file
+							if($fileError === 0){
+
+								//check for file size
+								if($fileSize < 20000000){
+									// get proper file name
+									$fileNameNew = uniqid('', true).".".$fileActualExt;
+
+									//upload file to root folder
+									$fileDestination = $_SERVER['DOCUMENT_ROOT'].'/sprl_slim/uploads/project_reports/'.$fileNameNew;
+
+									//upload file
+									move_uploaded_file($fileTmpName, $fileDestination);
+									//update records
+									Student::where('user_id', '=', $user_id)
+							 					->update([
+							 						'final_project_report_file_path' => $fileDestination,
+							 						'final_project_report_file_name' => $project_report_name,
+							 						'final_project_report_new_file_name' => $fileNameNew
+							 					]);
+
+							 		//get project report file and project report file name
+									$p_report = "SELECT * FROM students WHERE user_id=$user_id";
+									$project_report = DB::select(DB::raw($p_report));
+
+							 		// Send email to supervisor
+							        $app->mail->send('email/project_report/project_report.php', ['student' => $sid, 'supervisors' => $supervisors, 'project_report' => $project_report], function($message) use($supervisors){
+
+							            $supervisor_email = '';
+							            //get supervisor email
+										foreach ($supervisors as $sup) {
+												$supervisor_email = $sup->suEmail;
+											}
+							            $message->to($supervisor_email);
+							            $message->subject('Approve Project Report (Thesis).');
+							        });
+
+									// flash message and redirect
+									$app->flash('success', 'File successfully uploaded.');
+									return $app->response->redirect($app->urlFor('student.add_project_report'));
+
+								}else{
+									// flash message and redirect
+									$app->flash('error', 'Your file is too large. Only files below 20mb are allowed.');
+									return $app->response->redirect($app->urlFor('student.add_project_report'));
+								}
+							}else{
+								// flash message and redirect
+								$app->flash('error', 'There was an error uploading your file!');
+								return $app->response->redirect($app->urlFor('student.add_project_report'));
+							}
+
+						} else{
+
+							// flash message and redirect
+							$app->flash('error', 'Only pdf files are allowed, Please attach a pdf file.');
+							return $app->response->redirect($app->urlFor('student.add_project_report'));
+
+						}
+					}
+						
 				}
 				
 			}

@@ -36,12 +36,16 @@ $app->post('/student/myproject/edit_project_objective/:id', $student(), function
 		$student_id = '';
 
 		//get student id
-		$get_id =  "SELECT student_id FROM students WHERE user_id=$user_id";
+		$get_id =  "SELECT students.student_id, users.* FROM students INNER JOIN users ON students.user_id=users.id WHERE user_id=$user_id";
 		$sid = DB::select(DB::raw($get_id));
 
 		foreach ($sid as $row) {
 			$student_id = $row->student_id;
 		}
+
+		//get assigned supervisors
+		$sup = "SELECT supervisions.*, (SELECT users.first_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suFName, (SELECT users.other_names FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suONames, (SELECT users.last_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suLName, (SELECT users.email FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suEmail FROM supervisions WHERE student_id=$student_id";
+		$supervisors = DB::select(DB::raw($sup));
 
 		//project objectives
 		$query = "SELECT * FROM project_objectives WHERE student_id=$student_id AND po_id=$po_id";
@@ -103,8 +107,12 @@ $app->post('/student/myproject/edit_project_objective/:id', $student(), function
 										'project_objective' => $project_objective
 									]);
 
+				//project objectives
+				$p_obj = "SELECT * FROM project_objectives WHERE student_id=$student_id AND po_id=$po_id";
+				$project_objectives = DB::select(DB::raw($p_obj));
+
 				// Send email to supervisor
-		        $app->mail->send('email/project_objectives/edited_project_objective.php', ['student' => $student, 'supervisors' => $supervisors, 'project_objectives' => $project_objectives], function($message) use($supervisors){
+		        $app->mail->send('email/project_objectives/edited_project_objective.php', ['student' => $sid, 'supervisors' => $supervisors, 'project_objectives' => $project_objectives], function($message) use($supervisors){
 
 		            $supervisor_email = '';
 		            //get supervisor email

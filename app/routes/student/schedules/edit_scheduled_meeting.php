@@ -51,7 +51,7 @@ $app->post('/student/schedules/edit_scheduled_meeting/:id', $student(), function
 		$student_id = '';
 
 		//get student id
-		$get_id =  "SELECT student_id FROM students WHERE user_id=$user_id";
+		$get_id =  "SELECT students.student_id, users.* FROM students INNER JOIN users ON students.user_id=users.id WHERE user_id=$user_id";
 		$sid = DB::select(DB::raw($get_id));
 
 		foreach ($sid as $row) {
@@ -71,7 +71,7 @@ $app->post('/student/schedules/edit_scheduled_meeting/:id', $student(), function
 		$scheduled_meeting = DB::select(DB::raw($query));
 
 		//get assigned supervisors
-		$query = "SELECT supervisions.*, (SELECT users.first_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suFName, (SELECT users.other_names FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suONames, (SELECT users.last_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suLName FROM supervisions WHERE student_id=$student_id";
+		$query = "SELECT supervisions.*, (SELECT users.first_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suFName, (SELECT users.other_names FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suONames, (SELECT users.last_name FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suLName, (SELECT users.email FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE supervisors.supervisor_id=supervisions.supervisor_id) AS suEmail FROM supervisions WHERE student_id=$student_id";
 		$supervisors = DB::select(DB::raw($query));
 
 		$request = $app->request;
@@ -175,7 +175,7 @@ $app->post('/student/schedules/edit_scheduled_meeting/:id', $student(), function
 						]);
 
 					// Send email to supervisor
-			        /*$app->mail->send('email/scheduled_meeting/edited_scheduled_meeting.php', ['student' => $student, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
+			        $app->mail->send('email/scheduled_meeting/edited_scheduled_meeting.php', ['student' => $sid, 'supervisors' => $supervisors, 'scheduled_date' => $scheduled_date], function($message) use($supervisors){
 
 			            $supervisor_email = '';
 			            //get supervisor email
@@ -184,7 +184,7 @@ $app->post('/student/schedules/edit_scheduled_meeting/:id', $student(), function
 							}
 			            $message->to($supervisor_email);
 			            $message->subject('Scheduled Date Edited.');
-			        });*/
+			        });
 					
 					//flash message and redirect
 					$app->flash('success', 'Scheduled date has been successfully updated.');
