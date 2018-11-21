@@ -16,6 +16,9 @@ $app->get('/supervisor/dashboard', $supervisor(), function() use($app){
 		$supervisor_id = $row->supervisor_id;
 	}
 
+	//current date
+	$current_date = date('Y-m-d');
+
 	//get student projects
 	$query = "SELECT supervisions.supervision_id, students.is_final_project_report_approved ,users.first_name,users.last_name,users.other_names,projects.project_name FROM supervisions INNER JOIN students ON supervisions.student_id =students.student_id INNER JOIN  users ON students.user_id=users.id LEFT JOIN projects ON students.project_id=projects.project_id WHERE supervisions.supervisor_id=$supervisor_id AND students.is_final_project_report_approved IS NULL";
 	$student_projects = DB::select(DB::raw($query));
@@ -31,7 +34,8 @@ $app->get('/supervisor/dashboard', $supervisor(), function() use($app){
 	$app->render('/supervisor/dashboard/dashboard.php',[
 		'student_projects' => $student_projects,
 		'supervisions' => $supervisions,
-		'tasks' => $tasks
+		'tasks' => $tasks,
+		'current_date' => $current_date
 	]);
 
 })->name('supervisor.dashboard'); 

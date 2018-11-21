@@ -341,6 +341,10 @@
   
 });
 
+   function myFunction() {
+    window.print();
+}
+
 </script>
 
 

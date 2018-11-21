@@ -32,8 +32,20 @@ $app->post('/supervisor/studentTasks/approve_task_completion/:id', $supervisor()
 
 	if(isset($_POST['approve_task'])){
 
+		//supervisor details
+		$user_id = $_SESSION[$app->config->get('auth.session')];
+		$supervisor_id = '';
+
+		//get supervisor id
+		$get_id =  "SELECT supervisors.supervisor_id, users.* FROM supervisors INNER JOIN users ON supervisors.user_id=users.id WHERE user_id=$user_id";
+		$sid = DB::select(DB::raw($get_id));
+
+		foreach ($sid as $row) {
+			$supervisor_id = $row->supervisor_id;
+		}
+
 		// get student task details
-		$query = "SELECT tasks.task_id, (SELECT users.first_name FROM students INNER JOIN users ON students.user_id=users.id WHERE students.student_id=supervisions.student_id) AS stFName, (SELECT users.other_names FROM students INNER JOIN users ON students.user_id=users.id WHERE students.student_id=supervisions.student_id) AS stONames, (SELECT users.last_name FROM students INNER JOIN users ON students.user_id=users.id WHERE students.student_id=supervisions.student_id) AS stLName, (SELECT projects.project_name FROM students INNER JOIN projects ON students.project_id=projects.project_id WHERE students.student_id=supervisions.student_id) AS project_name, scheduled_meetings.scheduled_date, supervisory_meetings.duration, tasks.supervisory_meeting_id, tasks.task_description, tasks.sent_for_approval, tasks.sent_for_completion, tasks.is_approved, tasks.is_completed, tasks.file_path, tasks.file_name, tasks.new_file_name, tasks.student_comments FROM supervisory_meetings INNER JOIN scheduled_meetings ON supervisory_meetings.scheduled_meeting_id=scheduled_meetings.scheduled_meeting_id INNER JOIN tasks ON supervisory_meetings.supervisory_meeting_id=tasks.supervisory_meeting_id INNER JOIN supervisions ON scheduled_meetings.supervision_id=supervisions.supervision_id WHERE tasks.task_id=$task_id";
+		$query = "SELECT tasks.task_id, (SELECT users.first_name FROM students INNER JOIN users ON students.user_id=users.id WHERE students.student_id=supervisions.student_id) AS stFName, (SELECT users.other_names FROM students INNER JOIN users ON students.user_id=users.id WHERE students.student_id=supervisions.student_id) AS stONames, (SELECT users.last_name FROM students INNER JOIN users ON students.user_id=users.id WHERE students.student_id=supervisions.student_id) AS stLName, (SELECT users.email FROM students INNER JOIN users ON students.user_id=users.id WHERE students.student_id=supervisions.student_id) AS stuEmail, (SELECT projects.project_name FROM students INNER JOIN projects ON students.project_id=projects.project_id WHERE students.student_id=supervisions.student_id) AS project_name, scheduled_meetings.scheduled_date, supervisory_meetings.duration, tasks.supervisory_meeting_id, tasks.task_description, tasks.sent_for_approval, tasks.sent_for_completion, tasks.is_approved, tasks.is_completed, tasks.file_path, tasks.file_name, tasks.new_file_name, tasks.student_comments FROM supervisory_meetings INNER JOIN scheduled_meetings ON supervisory_meetings.scheduled_meeting_id=scheduled_meetings.scheduled_meeting_id INNER JOIN tasks ON supervisory_meetings.supervisory_meeting_id=tasks.supervisory_meeting_id INNER JOIN supervisions ON scheduled_meetings.supervision_id=supervisions.supervision_id WHERE tasks.task_id=$task_id";
 		$tasks = DB::select(DB::raw($query));
 
 		foreach($tasks as $ts){
@@ -59,16 +71,17 @@ $app->post('/supervisor/studentTasks/approve_task_completion/:id', $supervisor()
 							'is_completed' => TRUE
 						]);
 
-				// send email to supervisor
-							// $app->mail->send('email/assigned/student.php', ['student' => $student, 'supervisor' => $supervisor], function($message) use($student){
+				// send email to student
+				$app->mail->send('email/tasks/approve_task_completion.php', ['supervisor' => $sid, 'student' => $tasks], function($message) use($tasks){
 
-					  //           $studentEmail = '';
-					  //           foreach ($student as $row) {
-					  //               $studentEmail = $row->email;
-					  //           }
-					  //           $message->to($studentEmail);
-					  //           $message->subject('Supervisor Assigned.');
-					  //       });
+		            $student_email = '';
+		            //get sstudent email
+					foreach ($tasks as $stu) {
+							$student_email = $stu->stuEmail;
+						}
+		            $message->to($student_email);
+		            $message->subject('Project Task Approved for Completion.');
+		        });
 
 				// flash message and redirect
 				$app->flash('success', 'Task has been approved for completion.');

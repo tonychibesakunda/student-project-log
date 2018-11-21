@@ -26,7 +26,7 @@
             
         </div>
 
-        <div class="col-sm-8  text-left" id="container">
+        <div class="col-sm-9  text-left" id="container">
             {% include 'templates/partials/error_messages.php' %}
             {% include 'templates/partials/success_messages.php' %}
             {% include 'templates/partials/info_messages.php' %}
@@ -102,7 +102,7 @@
     </form> 
     </div>
 
-        <div class="col-sm-2 sidenav">
+        <div class="col-sm-1 sidenav">
             <div class="well">
                 <label style="font-size: 20px;">Tip <span class="glyphicon glyphicon-info-sign"></span></label>
                 <p>This section is used for viewing added tasks to your project log</p>
